@@ -613,7 +613,7 @@ final class CameraService: NSObject, ObservableObject {
     /// All values are displayed relative to the wide-angle camera's 1× field of view.
     /// Virtual cameras cover the full range without rebuilding the session while pinching.
     private func zoomBounds() -> ClosedRange<CGFloat> {
-        guard let device = currentDevice else { return 1...1 }
+        guard let device = currentDevice else { return 0.1...100 }
         let base = deviceZoomFactor(device, userZoom: 1)
         var minimum = device.minAvailableVideoZoomFactor / base
         var maximum = min(device.maxAvailableVideoZoomFactor, device.activeFormat.videoMaxZoomFactor) / base
@@ -624,8 +624,15 @@ final class CameraService: NSObject, ObservableObject {
                 maximum = min(wide.maxAvailableVideoZoomFactor, wide.activeFormat.videoMaxZoomFactor) / wideBase
             } else if !device.isVirtualDevice, ultraWideDevice() != nil { minimum = min(minimum, 0.5) }
         }
-        minimum = max(0.01, minimum)
-        return minimum...max(minimum, min(100, maximum))
+        // 相机还没就绪（currentDevice 为 nil）或设备报出退化范围时，UI 仍要给出可用区间，
+        // 真正的硬件夹取在 AdaptiveCameraEngine.zoom 里完成。
+        minimum = max(0.1, minimum)
+        maximum = min(100, maximum)
+        if !maximum.isFinite || maximum <= minimum + 0.05 {
+            minimum = 0.1
+            maximum = 100
+        }
+        return minimum...maximum
     }
 
     private func updateZoomOptions() {

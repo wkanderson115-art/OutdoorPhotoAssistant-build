@@ -71,9 +71,16 @@ enum LocalTiledRenderer {
                 let tw = min(tileEdge, width - x), th = min(tileEdge, height - y)
                 let roi = CGRect(x: bounds.minX + CGFloat(x), y: bounds.minY + CGFloat(y),
                                  width: CGFloat(tw), height: CGFloat(th))
-                guard let tile = context.createCGImage(image, from: roi,
-                                                       format: .RGBA8, colorSpace: colorSpace) else { return nil }
-                destination.draw(tile, in: CGRect(x: x, y: y, width: tw, height: th))
+                // 设备内存吃紧时 createCGImage 会返回 nil；清缓存重试一次，仍失败再缩小 ROI 重试。
+                var tile = context.createCGImage(image, from: roi,
+                                                 format: .RGBA8, colorSpace: colorSpace)
+                if tile == nil {
+                    context.clearCaches()
+                    tile = context.createCGImage(image, from: roi,
+                                                 format: .RGBA8, colorSpace: colorSpace)
+                }
+                guard let tileImage = tile else { return nil }
+                destination.draw(tileImage, in: CGRect(x: x, y: y, width: tw, height: th))
             }
         }
         return destination.makeImage()

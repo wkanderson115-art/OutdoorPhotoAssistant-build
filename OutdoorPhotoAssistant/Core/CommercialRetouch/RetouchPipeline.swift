@@ -206,9 +206,27 @@ final class RetouchPipeline {
                               spotsBefore: best.spots, remaining: best.remaining, ev: best.ev,
                               mode: mode)
 
-        let tileEdge = plan.tier == .standard ? 2048 : 1024
-        guard let base = LocalTiledRenderer.render(compliant, extent: extent, context: context,
-                                                   tileEdge: tileEdge) else {
+        // 逐级降级：大瓦片失败就缩小瓦片，最后退回整图一次渲染。
+        // 设备内存吃紧时 createCGImage 会返回 nil，这里不能直接判失败（原图必须能出片）。
+        let preferredTile = plan.tier == .standard ? 2048 : 1024
+        var base: CGImage? = LocalTiledRenderer.render(compliant, extent: extent,
+                                                       context: context, tileEdge: preferredTile)
+        if base == nil {
+            for tile in [512, 256] {
+                context.clearCaches()
+                if let retried = LocalTiledRenderer.render(compliant, extent: extent,
+                                                           context: context, tileEdge: tile) {
+                    base = retried
+                    break
+                }
+            }
+        }
+        if base == nil, let colorSpace = CGColorSpace(name: CGColorSpace.sRGB) {
+            context.clearCaches()
+            base = context.createCGImage(compliant, from: extent.integral,
+                                         format: .RGBA8, colorSpace: colorSpace)
+        }
+        guard let base else {
             throw RetouchFailure.processingFailed
         }
         var outputCG = base

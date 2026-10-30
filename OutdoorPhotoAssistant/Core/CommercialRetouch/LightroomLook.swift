@@ -609,11 +609,18 @@ extension LightroomLook {
     /// 降噪/颜色分级/颗粒/暗角都是独立阶段。想回退旧实现把下面这行换成
     /// `return applyLegacy(to: image, skinMask: skinMask, context: context)`。
     func apply(to image: CIImage, skinMask: CIImage? = nil, context: CIContext) -> CIImage {
-        return ACRDevelopEngine.render(image,
-                                       settings: acrSettings,
-                                       skinMask: skinMask,
-                                       profile: nil,
-                                       context: context)
+        let rendered = ACRDevelopEngine.render(image,
+                                               settings: acrSettings,
+                                               skinMask: skinMask,
+                                               profile: nil,
+                                               context: context)
+        // 引擎里任何 kernel 在设备上编译/执行失败都会退化成原图或空 extent；
+        // 空 extent 说明这条链子没跑通，直接回退旧实现，保证精修永远能出片。
+        let e = rendered.extent
+        if e.isNull || e.isInfinite || e.width < 1 || e.height < 1 {
+            return applyLegacy(to: image, skinMask: skinMask, context: context)
+        }
+        return rendered
     }
 
     /// 旧的 Core Image 拼装实现，保留做对照（AB 测试 / 回归对比用）。

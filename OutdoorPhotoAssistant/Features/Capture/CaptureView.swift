@@ -781,7 +781,7 @@ struct CaptureView: View {
     private func roundedZoom(_ value: Double) -> Double {
         let limited = min(requestedZoomRange.upperBound,
                           max(requestedZoomRange.lowerBound, value))
-        return (limited * 100).rounded() / 100
+        return (limited * 10).rounded() / 10   // 0.1 步进
     }
 
     /// Public UI range is 0.10×...100.00× with 0.01× precision. AVCapture can
@@ -790,8 +790,9 @@ struct CaptureView: View {
     private func applyManualZoom(_ requested: Double, reportLimit: Bool) {
         guard requested.isFinite else { return }
         let normalized = roundedZoom(requested)
-        let low = Double(camera.minimumZoom)
-        let high = max(low, min(requestedZoomRange.upperBound, Double(camera.maximumZoom)))
+        // 先按 UI 公开区间夹，再交给设备夹取；避免相机边界退化时把用户输入夹回 1.0。
+        let low = requestedZoomRange.lowerBound
+        let high = requestedZoomRange.upperBound
         let target = min(high, max(low, normalized))
         autoZoom = false
         lastManualZoom = Date()
@@ -934,7 +935,8 @@ struct CaptureView: View {
         .sheet(isPresented: $showZoomControl) { zoomSheet }
         .sheet(isPresented: $showingEffects) { effectsPanel }
         .onChange(of: allowsRotation, initial: true) { _, allowed in
-            OrientationPolicy.apply(allowed ? .allButUpsideDown : .portrait)
+            _ = allowed
+            OrientationPolicy.apply(.allButUpsideDown)
         }
         .sheet(isPresented: $showingSettings) {
             SettingsView(isPresentedModally: true).preferredColorScheme(.light)
@@ -945,7 +947,7 @@ struct CaptureView: View {
         capturePresented
         .onAppear {
             guard self.isSelected else { return }
-            OrientationPolicy.apply(allowsRotation ? .allButUpsideDown : .portrait)
+            OrientationPolicy.apply(.allButUpsideDown)
             self.camera.setDepthDelivery(self.portraitDepth)
             self.camera.setHighQualityMode(self.highQuality)
             self.camera.start()

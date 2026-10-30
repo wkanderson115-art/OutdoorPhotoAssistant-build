@@ -88,14 +88,21 @@ extension LightroomLook {
                    geometry: ACRGeometryAdjust = ACRGeometryAdjust(),
                    repair: ACRRepairSettings = ACRRepairSettings(),
                    context: CIContext) -> CIImage {
-        var work = ACRDevelopEngine.render(image,
-                                           settings: acrSettings,
-                                           skinMask: skinMask,
-                                           profile: profile,
-                                           context: context)
+        let developed = ACRDevelopEngine.render(image,
+                                                settings: acrSettings,
+                                                skinMask: skinMask,
+                                                profile: profile,
+                                                context: context)
+        let de = developed.extent
+        guard !de.isNull, !de.isInfinite, de.width >= 1, de.height >= 1 else {
+            return apply(to: image, skinMask: skinMask, context: context)
+        }
+        var work = developed
         work = ACRLensRepairEngine.correctLens(work, correction: lens, context: context)
         work = ACRLensRepairEngine.applyGeometry(work, geometry: geometry)
         work = ACRLensRepairEngine.applyRepair(work, settings: repair, context: context)
+        let e = work.extent
+        if e.isNull || e.isInfinite || e.width < 1 || e.height < 1 { return developed }
         return work
     }
 }
