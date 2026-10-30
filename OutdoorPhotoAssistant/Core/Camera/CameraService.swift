@@ -78,6 +78,8 @@ final class CameraService: NSObject, ObservableObject {
     private var lastMotionExposureUpdate = Date.distantPast
     private var captureInFlight = 0
     private var pendingUserZoom: CGFloat?
+    /// 用户最后一次请求的倍率：KVO 回写时用它防止 UI 被硬件旧值弹回。
+    private var requestedUserZoom: CGFloat?
     private var lastBias: Float = 0
     private var lastBiasTime: CFAbsoluteTime = 0
     private var observers: [NSObjectProtocol] = []
@@ -555,7 +557,18 @@ final class CameraService: NSObject, ObservableObject {
         ]
         zoomObservation = device.observe(\.videoZoomFactor, options: [.initial, .new]) { [weak self] device, _ in
             let measured = device.videoZoomFactor / base
-            DispatchQueue.main.async { self?.zoom = measured }
+            DispatchQueue.main.async {
+                guard let self else { return }
+                if let requested = self.requestedUserZoom {
+                    // ramp 过程中硬件值会连续变化；只要还没追上用户请求，就别把 UI 拽回去。
+                    if abs(measured - requested) <= max(0.05, requested * 0.05) {
+                        self.requestedUserZoom = nil
+                        self.zoom = measured
+                    }
+                    return
+                }
+                self.zoom = measured
+            }
         }
     }
 
@@ -569,9 +582,16 @@ final class CameraService: NSObject, ObservableObject {
     /// 用户可见的变焦入口：滑杆、倍率胶囊、导演自动变焦都走这里，默认平滑过渡。
     /// `animated: false` 只给「拍照结束后的挂起补偿」这类不需要过渡的场景。
     func setZoom(_ userZoom: CGFloat, animated: Bool = true) {
+        guard userZoom.isFinite else { return }
+        // 先把用户想要的值发布出去：设备下发是异步的（还可能因为正在配置/切换镜头而延后），
+        // 不乐观更新的话 UI 会先停在旧值，看起来就是「拖了又弹回 1.00」。
+        let uiTarget = max(0.1, min(100, userZoom))
+        DispatchQueue.main.async { [weak self] in
+            self?.requestedUserZoom = uiTarget
+            self?.zoom = uiTarget
+        }
         sessionQueue.async { [weak self] in
             guard let self else { return }
-            guard userZoom.isFinite else { return }
             let bounds = self.zoomBounds()
             let target = max(bounds.lowerBound, min(100, min(userZoom, bounds.upperBound)))
             if self.isCaptureInFlight {
@@ -585,7 +605,13 @@ final class CameraService: NSObject, ObservableObject {
     }
 
     private func applyUserZoom(_ target: CGFloat, animated: Bool) {
-        guard !isConfiguring else { return }
+        guard !isConfiguring else {
+            // 正在配置/切换镜头时把请求挂起，配置完成后会补下发；直接 return 会丢掉用户的拖动。
+            stateLock.lock()
+            pendingUserZoom = target
+            stateLock.unlock()
+            return
+        }
         let virtualUltra = currentDevice?.constituentDevices.contains { $0.deviceType == .builtInUltraWideCamera } ?? false
         let needsUltra = currentPosition == .back && !virtualUltra && wantsUltraWide(target) && ultraWideDevice() != nil
         let deviceIsUltra = currentDevice?.deviceType == .builtInUltraWideCamera

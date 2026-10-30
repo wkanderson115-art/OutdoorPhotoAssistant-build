@@ -186,11 +186,69 @@ enum ACRDevelopEngine {
 
     // MARK: 主入口
 
+    /// 主入口：先跑完整管线，再做一次"可信度自检"。
+    /// 自检不过（整幅黑/整幅白/空 extent）就退到安全模式，安全模式还不过就原样返回，
+    /// 保证精修页面永远不会给出黑图。
     static func render(_ image: CIImage,
                        settings: ACRDevelopSettings,
                        skinMask: CIImage? = nil,
                        profile: ACRDCPProfile? = nil,
                        context: CIContext) -> CIImage {
+        let full = renderStages(image, settings: settings, skinMask: skinMask,
+                                profile: profile, context: context, safeMode: false)
+        if isPlausible(full, source: image, context: context) { return full }
+        let safe = renderStages(image, settings: settings, skinMask: skinMask,
+                                profile: profile, context: context, safeMode: true)
+        if isPlausible(safe, source: image, context: context) { return safe }
+        return image
+    }
+
+    /// 采样 24×24 代理，比较输出与原图的平均亮度：
+    /// - 输出几乎全黑（<0.01）而原图不是黑图
+    /// - 输出几乎全白（>0.995）而原图不是白图
+    /// - extent 非法
+    /// 任一命中就认为这条管线在设备上没跑通。
+    static func isPlausible(_ output: CIImage, source: CIImage, context: CIContext) -> Bool {
+        let e = output.extent
+        guard e.isFinite, !e.isNull, e.width >= 1, e.height >= 1 else { return false }
+        guard let outLuma = proxyLuma(output, context: context) else { return false }
+        guard let srcLuma = proxyLuma(source, context: context) else { return true }
+        if outLuma < 0.01 && srcLuma > 0.03 { return false }
+        if outLuma > 0.995 && srcLuma < 0.95 { return false }
+        return true
+    }
+
+    private static func proxyLuma(_ image: CIImage, context: CIContext) -> Double? {
+        let e = image.extent
+        guard e.isFinite, e.width >= 1, e.height >= 1 else { return nil }
+        let longSide = max(e.width, e.height)
+        let scale = min(1.0, 24.0 / longSide)
+        let small = image.transformed(by: CGAffineTransform(scaleX: scale, y: scale))
+        let rect = CGRect(x: small.extent.origin.x, y: small.extent.origin.y,
+                          width: 24, height: 24)
+        let w = 24, h = 24
+        var buffer = [UInt8](repeating: 0, count: w * h * 4)
+        let space = CGColorSpace(name: CGColorSpace.sRGB) ?? CGColorSpaceCreateDeviceRGB()
+        context.render(small, toBitmap: &buffer, rowBytes: w * 4, bounds: rect,
+                       format: .RGBA8, colorSpace: space)
+        var sum = 0.0
+        var i = 0
+        while i < w * h {
+            let o = i * 4
+            sum += 0.299 * Double(buffer[o]) + 0.587 * Double(buffer[o + 1]) + 0.114 * Double(buffer[o + 2])
+            i += 1
+        }
+        return sum / Double(w * h) / 255.0
+    }
+
+    /// 真正的管线实现。`safeMode = true` 时只跑最稳的几段（曝光/端点/对比/LUT），
+    /// 跳过所有依赖多图 kernel、随机源、destCoord 的段，用来定位"设备上黑图"。
+    static func renderStages(_ image: CIImage,
+                             settings: ACRDevelopSettings,
+                             skinMask: CIImage? = nil,
+                             profile: ACRDCPProfile? = nil,
+                             context: CIContext,
+                             safeMode: Bool) -> CIImage {
         let extent = image.extent
         guard extent.isInfinite == false, extent.isNull == false,
               extent.width > 1, extent.height > 1 else { return image }
@@ -225,7 +283,7 @@ enum ACRDevelopEngine {
         }
 
         // 4. 去雾（线性域，暗通道先验）
-        if abs(s.dehaze) > 0.5 {
+        if !safeMode, abs(s.dehaze) > 0.5 {
             work = stageDehaze(work, settings: s, px: px, context: context, extent: extent)
         }
 
@@ -251,32 +309,32 @@ enum ACRDevelopEngine {
         }
 
         // 9. 亮度/色彩降噪（在显示域，避免线性域放大噪声）
-        if s.luminanceNR > 0.5 || s.colorNR > 0.5 {
+        if !safeMode, s.luminanceNR > 0.5 || s.colorNR > 0.5 {
             work = stageNoiseReduction(work, settings: s, px: px, extent: extent)
         }
 
         // 10. Clarity（LocalContrastY）
-        if abs(s.clarity) > 0.5 {
+        if !safeMode, abs(s.clarity) > 0.5 {
             work = stageClarity(work, settings: s, px: px, skinMask: skinMask, extent: extent)
         }
 
         // 11. Texture（texture_direct_gf_ycc）
-        if abs(s.texture) > 0.5 {
+        if !safeMode, abs(s.texture) > 0.5 {
             work = stageTexture(work, settings: s, px: px, skinMask: skinMask, extent: extent)
         }
 
         // 12. 锐化（三尺度 + 阈值 + 边缘掩膜）
-        if s.sharpness > 0.5 {
+        if !safeMode, s.sharpness > 0.5 {
             work = stageSharpen(work, settings: s, px: px, skinMask: skinMask, extent: extent)
         }
 
         // 13. 颗粒
-        if s.grain > 0.5 {
+        if !safeMode, s.grain > 0.5 {
             work = stageGrain(work, settings: s, extent: extent)
         }
 
         // 14. 暗角
-        if abs(s.vignette) > 0.5 {
+        if !safeMode, abs(s.vignette) > 0.5 {
             work = stageVignette(work, settings: s, extent: extent)
         }
 
