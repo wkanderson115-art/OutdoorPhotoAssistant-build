@@ -66,6 +66,7 @@
 		B00000000000000000000057 /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000057 /* ReviewView.swift */; };
 		B00000000000000000000058 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000058 /* SettingsView.swift */; };
 		B00000000000000000000059 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000060 /* Assets.xcassets */; };
+		B0000000000000000000006C /* ACRPresets in Resources */ = {isa = PBXBuildFile; fileRef = F0000000000000000000006C /* ACRPresets */; };
 		B00000000000000000000060 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000061 /* PrivacyInfo.xcprivacy */; };
 		B00000000000000000000062 /* LightroomLook.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000062 /* LightroomLook.swift */; };
 		B00000000000000000000063 /* LightroomPresetParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000063 /* LightroomPresetParser.swift */; };
@@ -141,6 +142,7 @@
 		F00000000000000000000058 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		F00000000000000000000059 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F00000000000000000000060 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F0000000000000000000006C /* ACRPresets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ACRPresets; sourceTree = "<group>"; };
 		F00000000000000000000061 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F00000000000000000000062 /* LightroomLook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightroomLook.swift; sourceTree = "<group>"; };
 		F00000000000000000000063 /* LightroomPresetParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightroomPresetParser.swift; sourceTree = "<group>"; };
@@ -161,7 +163,7 @@
 /* Begin PBXGroup section */
 		A00000000000000000000002 = {isa = PBXGroup; children = (A00000000000000000000006 /* OutdoorPhotoAssistant */, A00000000000000000000003 /* Products */, ); sourceTree = "<group>"; };
 		A00000000000000000000003 /* Products */ = {isa = PBXGroup; children = (A00000000000000000000005 /* OutdoorPhotoAssistant.app */, ); name = Products; sourceTree = "<group>"; };
-		A00000000000000000000006 /* OutdoorPhotoAssistant */ = {isa = PBXGroup; children = (D00000000000000000000001 /* App */, D00000000000000000000015 /* Core */, D00000000000000000000016 /* Features */, F00000000000000000000059 /* Info.plist */, F00000000000000000000060 /* Assets.xcassets */, F00000000000000000000061 /* PrivacyInfo.xcprivacy */, ); path = OutdoorPhotoAssistant; sourceTree = "<group>"; };
+		A00000000000000000000006 /* OutdoorPhotoAssistant */ = {isa = PBXGroup; children = (D00000000000000000000001 /* App */, D00000000000000000000015 /* Core */, D00000000000000000000016 /* Features */, F00000000000000000000059 /* Info.plist */, F00000000000000000000060 /* Assets.xcassets */, F00000000000000000000061 /* PrivacyInfo.xcprivacy */, F0000000000000000000006C /* ACRPresets */, ); path = OutdoorPhotoAssistant; sourceTree = "<group>"; };
 		D00000000000000000000015 /* Core */ = {isa = PBXGroup; children = (D00000000000000000000002 /* Camera */, D00000000000000000000003 /* Analysis */, D00000000000000000000004 /* Storage */, D00000000000000000000005 /* Cloud */, D00000000000000000000010 /* Location */, D00000000000000000000011 /* Motion */, D00000000000000000000007 /* CommercialRetouch */, ); path = Core; sourceTree = "<group>"; };
 		D00000000000000000000016 /* Features */ = {isa = PBXGroup; children = (D00000000000000000000012 /* Capture */, D00000000000000000000013 /* Review */, D00000000000000000000014 /* Settings */, D00000000000000000000006 /* Gallery */, D00000000000000000000009 /* Cloud */, D00000000000000000000008 /* CommercialRetouch */, ); path = Features; sourceTree = "<group>"; };
 		D00000000000000000000001 /* App */ = {isa = PBXGroup; children = (F00000000000000000000001 /* OutdoorPhotoAssistantApp.swift */, F00000000000000000000002 /* RootView.swift */, F00000000000000000000003 /* AppTheme.swift */, F00000000000000000000004 /* OrientationPolicy.swift */, ); path = App; sourceTree = "<group>"; };
@@ -189,7 +191,7 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		A00000000000000000000009 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B00000000000000000000059 /* Assets.xcassets in Resources */, B00000000000000000000060 /* PrivacyInfo.xcprivacy in Resources */, ); runOnlyForDeploymentPostprocessing = 0; };
+		A00000000000000000000009 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B00000000000000000000059 /* Assets.xcassets in Resources */, B00000000000000000000060 /* PrivacyInfo.xcprivacy in Resources */, B0000000000000000000006C /* ACRPresets in Resources */, ); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */

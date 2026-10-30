@@ -1,0 +1,34 @@
+<x:xmpmeta xmlns:x="adobe:ns:meta/">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:crs="http://ns.adobe.com/camera-raw-settings/1.0/"
+   crs:Version="15.0"
+   crs:ProcessVersion="11.0"
+   crs:HasSettings="True"
+   crs:Name="08_美食暖调"
+   crs:Exposure2012="0.12"
+   crs:Contrast2012="10"
+   crs:Highlights2012="-22"
+   crs:Shadows2012="16"
+   crs:Whites2012="10"
+   crs:Blacks2012="-6"
+   crs:Texture="20"
+   crs:Clarity2012="12"
+   crs:Dehaze="6"
+   crs:Vibrance="22"
+   crs:Saturation="6"
+   crs:HueAdjustmentOrange="-4"
+   crs:SaturationAdjustmentOrange="12"
+   crs:SaturationAdjustmentYellow="8"
+   crs:Sharpness="40">
+   <crs:ToneCurvePV2012>
+    <rdf:Seq>
+     <rdf:li>0, 0</rdf:li>
+     <rdf:li>64, 60</rdf:li>
+     <rdf:li>192, 200</rdf:li>
+     <rdf:li>255, 255</rdf:li>
+    </rdf:Seq>
+   </crs:ToneCurvePV2012>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>

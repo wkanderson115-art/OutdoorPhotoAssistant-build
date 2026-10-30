@@ -63,8 +63,32 @@ final class LightroomPresetStore {
 
     // MARK: - 读取
 
-    /// 全部预设，按名称排序（同名的按 UUID 排，保证顺序稳定）。
+    /// 内置预设是否已经导入过（一次性，进程内幂等）。
+    private static var didSeedBundledPresets = false
+
+    /// 全部预设：先把 App 包里的内置 xmp 导进来，再读仓库。
     func all() -> [LightroomPreset] {
+        seedBundledPresetsIfNeeded()
+        return loadAll()
+    }
+
+    /// 把 `Resources/ACRPresets/*.xmp`（文件夹引用，随包发布）导入到仓库。
+    /// 同名跳过，所以用户删掉某个内置预设后不会再被塞回来。
+    private func seedBundledPresetsIfNeeded() {
+        guard !Self.didSeedBundledPresets else { return }
+        Self.didSeedBundledPresets = true
+        guard let urls = Bundle.main.urls(forResourcesWithExtension: "xmp",
+                                          subdirectory: "ACRPresets") else { return }
+        var names = Set(loadAll().map { $0.name })
+        for url in urls.sorted(by: { $0.lastPathComponent < $1.lastPathComponent }) {
+            guard let parsed = LightroomPresetParser.parse(contentsOf: url) else { continue }
+            if names.contains(parsed.name) { continue }
+            if (try? save(parsed)) != nil { names.insert(parsed.name) }
+        }
+    }
+
+    /// 纯读仓库（不过内置种子），避免 `all()` 与种子互相递归。
+    private func loadAll() -> [LightroomPreset] {
         let urls = (try? fileManager.contentsOfDirectory(at: root,
                                                          includingPropertiesForKeys: [.isRegularFileKey])) ?? []
         var presets: [LightroomPreset] = []

@@ -1,0 +1,40 @@
+<x:xmpmeta xmlns:x="adobe:ns:meta/">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:crs="http://ns.adobe.com/camera-raw-settings/1.0/"
+   crs:Version="15.0"
+   crs:ProcessVersion="11.0"
+   crs:HasSettings="True"
+   crs:Name="12_商业人像"
+   crs:Exposure2012="0.12"
+   crs:Contrast2012="6"
+   crs:Highlights2012="-34"
+   crs:Shadows2012="24"
+   crs:Whites2012="6"
+   crs:Blacks2012="-6"
+   crs:Texture="-16"
+   crs:Clarity2012="-8"
+   crs:Dehaze="2"
+   crs:Vibrance="10"
+   crs:Saturation="-2"
+   crs:HueAdjustmentOrange="-6"
+   crs:LuminanceAdjustmentOrange="8"
+   crs:ColorGradeShadowHue="28"
+   crs:ColorGradeShadowSat="10"
+   crs:Sharpness="34"
+   crs:SharpenRadius="0.9"
+   crs:SharpenEdgeMasking="70"
+   crs:LuminanceSmoothing="22"
+   crs:ColorNoiseReduction="22"
+   crs:PostCropVignetteAmount="-10">
+   <crs:ToneCurvePV2012>
+    <rdf:Seq>
+     <rdf:li>0, 0</rdf:li>
+     <rdf:li>64, 60</rdf:li>
+     <rdf:li>192, 200</rdf:li>
+     <rdf:li>255, 255</rdf:li>
+    </rdf:Seq>
+   </crs:ToneCurvePV2012>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
