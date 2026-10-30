@@ -210,7 +210,8 @@ enum ACRDevelopEngine {
     /// 任一命中就认为这条管线在设备上没跑通。
     static func isPlausible(_ output: CIImage, source: CIImage, context: CIContext) -> Bool {
         let e = output.extent
-        guard e.isFinite, !e.isNull, e.width >= 1, e.height >= 1 else { return false }
+        guard !e.isNull, !e.isInfinite, e.width.isFinite, e.height.isFinite,
+              e.width >= 1, e.height >= 1 else { return false }
         guard let outLuma = proxyLuma(output, context: context) else { return false }
         guard let srcLuma = proxyLuma(source, context: context) else { return true }
         if outLuma < 0.01 && srcLuma > 0.03 { return false }
@@ -220,7 +221,8 @@ enum ACRDevelopEngine {
 
     private static func proxyLuma(_ image: CIImage, context: CIContext) -> Double? {
         let e = image.extent
-        guard e.isFinite, e.width >= 1, e.height >= 1 else { return nil }
+        guard !e.isNull, !e.isInfinite, e.width.isFinite, e.height.isFinite,
+              e.width >= 1, e.height >= 1 else { return nil }
         let longSide = max(e.width, e.height)
         let scale = min(1.0, 24.0 / longSide)
         let small = image.transformed(by: CGAffineTransform(scaleX: scale, y: scale))
