@@ -507,6 +507,7 @@ enum ACRLensRepairEngine {
         for spot in spots {
             let patch = work.transformed(by: CGAffineTransform(translationX: spot.sourceOffset.dx,
                                                                y: spot.sourceOffset.dy))
+                .cropped(to: extent)
             guard let mask = circleMask(center: spot.center, radius: spot.radius,
                                         feather: spot.feather, extent: extent) else { continue }
             let blended = patch.applyingFilter("CIBlendWithMask", parameters: [

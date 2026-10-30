@@ -181,7 +181,7 @@ do {
         diff += abs(Double(src.data[i]) - Double(out.data[i]))
         i += 4
     }
-    expect(diff > 0, "畸变校正应改变边缘像素")
+    expect(diff / Double(src.data.count / 4) > 0.001, "畸变校正应改变边缘像素")
     let centerSrc = src.rgb(32, 32)
     let centerOut = out.rgb(32, 32)
     expect(abs(centerSrc.0 - centerOut.0) < 0.35, "画面中心不该被大幅拖动")
@@ -334,7 +334,7 @@ do {
         diff += abs(Double(src.data[i]) - Double(out.data[i]))
         i += 4
     }
-    expect(diff > 0, "透视校正应改变像素")
+    expect(diff / Double(src.data.count / 4) > 0.001, "透视校正应改变像素")
 }
 print("")
 if failures == 0 {
