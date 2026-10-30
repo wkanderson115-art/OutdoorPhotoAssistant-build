@@ -585,7 +585,11 @@ final class CameraService: NSObject, ObservableObject {
         guard userZoom.isFinite else { return }
         // 先把用户想要的值发布出去：设备下发是异步的（还可能因为正在配置/切换镜头而延后），
         // 不乐观更新的话 UI 会先停在旧值，看起来就是「拖了又弹回 1.00」。
-        let uiTarget = max(0.1, min(100, userZoom))
+        // 先用「已发布的 UI 区间」夹一次：超出硬件能力时 UI 不能停在设备到不了的值，
+        // 否则 KVO 永远等不到 measured≈requested，滑杆会显示 100× 而画面停在 5×。
+        let lo = max(0.1, min(minimumZoom, maximumZoom))
+        let hi = min(100, max(minimumZoom, maximumZoom))
+        let uiTarget = min(hi, max(lo, userZoom))
         DispatchQueue.main.async { [weak self] in
             self?.requestedUserZoom = uiTarget
             self?.zoom = uiTarget
