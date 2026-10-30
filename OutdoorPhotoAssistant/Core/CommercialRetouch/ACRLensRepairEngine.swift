@@ -287,7 +287,7 @@ enum ACRLensRepairEngine {
                             context: CIContext) -> CIImage {
         guard correction.enabled else { return image }
         let extent = image.extent
-        guard extent.isFinite, extent.width > 4, extent.height > 4 else { return image }
+        guard (!extent.isNull && !extent.isInfinite), extent.width > 4, extent.height > 4 else { return image }
         var work = image
 
         if correction.distortion > 0.5, let entry = correction.entry {
@@ -397,7 +397,7 @@ enum ACRLensRepairEngine {
 
     static func applyGeometry(_ image: CIImage, geometry: ACRGeometryAdjust) -> CIImage {
         let extent = image.extent
-        guard extent.isFinite else { return image }
+        guard (!extent.isNull && !extent.isInfinite) else { return image }
         var work = image
 
         if abs(geometry.perspectiveVertical) > 0.0001 || abs(geometry.perspectiveHorizontal) > 0.0001 {
@@ -616,7 +616,7 @@ enum ACRLensRepairEngine {
     /// 选择主体替身：中心先验 + 对比度反差（对应 `cr_stage_mask_render` 的启发式蒙版）
     static func subjectMaskSubstitute(_ image: CIImage, context: CIContext) -> CIImage? {
         let extent = image.extent
-        guard extent.isFinite else { return nil }
+        guard (!extent.isNull && !extent.isInfinite) else { return nil }
         let vignette = CIFilter(name: "CIVignetteEffect", parameters: [
             kCIInputImageKey: image,
             kCIInputCenterKey: CIVector(x: extent.midX, y: extent.midY),
@@ -734,7 +734,7 @@ enum ACRLensRepairEngine {
 }
 
 /// 与 ACRDevelopEngine 里同一个思路：warp kernel 编译失败返回 nil，统一入口便于 guard。
-private extension Optional where Wrapped == CIWarpKernel {
+extension Optional where Wrapped == CIWarpKernel {
     func apply(extent: CGRect, roiCallback: @escaping CIKernelROICallback,
                arguments: [Any]) -> CIImage? {
         guard let kernel = self else { return nil }

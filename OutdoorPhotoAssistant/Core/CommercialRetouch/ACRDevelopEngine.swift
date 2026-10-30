@@ -1049,7 +1049,7 @@ enum ACRDevelopEngine {
 /// kernel 编译失败时 `CIColorKernel(source:)` 返回 nil，这里给它一个统一入口：
 /// `K.xxx.apply(extent:arguments:)` 在 nil 时直接返回 nil，调用点的
 /// `guard let` / `?? fallback` 逻辑保持不变（失败即跳过该阶段，不会崩）。
-private extension Optional where Wrapped == CIColorKernel {
+extension Optional where Wrapped == CIColorKernel {
     func apply(extent: CGRect, arguments: [Any]) -> CIImage? {
         guard let kernel = self else { return nil }
         return kernel.apply(extent: extent, arguments: arguments)
