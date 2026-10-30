@@ -279,6 +279,15 @@ enum ACRLensRepairEngine {
 
     static var algorithmVersion = "acr-aux-18.7.1"
 
+
+    /// 多图 kernel 的统一入口（CIKL 不支持多 __sample，只能 sampler + sample()）。
+    static func applyC(_ kernel: CIKernel?, _ extent: CGRect, _ args: [Any]) -> CIImage? {
+        guard let k = kernel else { return nil }
+        let pad = max(32.0, max(extent.width, extent.height) * 0.05)
+        let roi: CIKernelROICallback = { _, rect in rect.insetBy(dx: -pad, dy: -pad) }
+        return k.apply(extent: extent, roiCallback: roi, arguments: args)
+    }
+
     // MARK: 镜头校正
 
     /// 顺序与 ACR 一致：畸变 → 横向色差 → 暗角（都在线性域）
@@ -385,7 +394,7 @@ enum ACRLensRepairEngine {
         let cx = extent.midX
         let cy = extent.midY
         let r = max(extent.width, extent.height) * 0.5
-        guard let out = K.vignetteFix.apply(extent: extent, arguments: [
+        guard let out = applyC(K.vignetteFix, extent, [
             image, NSNumber(value: Double(cx)), NSNumber(value: Double(cy)),
             NSNumber(value: Double(r)), NSNumber(value: k1),
             NSNumber(value: k2), NSNumber(value: k3)
@@ -549,7 +558,7 @@ enum ACRLensRepairEngine {
                 kCIInputImageKey: work,
                 kCIInputRadiusKey: max(0.8, extent.width / 900)
             ])?.outputImage ?? work
-            if let out = K.mix.apply(extent: extent, arguments: [
+            if let out = applyC(K.mix, extent, [
                 work, blurred, NSNumber(value: amount * 0.65)
             ]) {
                 work = out.cropped(to: extent)
@@ -558,7 +567,7 @@ enum ACRLensRepairEngine {
 
         if settings.fillLight > 0.5 {
             let amount = min(1.0, settings.fillLight / 100.0)
-            if let out = K.fillLight.apply(extent: extent, arguments: [
+            if let out = applyC(K.fillLight, extent, [
                 work, NSNumber(value: amount)
             ]) {
                 work = out.cropped(to: extent)
@@ -567,7 +576,7 @@ enum ACRLensRepairEngine {
 
         if settings.defringe > 0.5 {
             let amount = min(1.0, settings.defringe / 100.0)
-            if let out = K.defringe.apply(extent: extent, arguments: [
+            if let out = applyC(K.defringe, extent, [
                 work, NSNumber(value: amount)
             ]) {
                 work = out.cropped(to: extent)
@@ -576,7 +585,7 @@ enum ACRLensRepairEngine {
 
         if settings.redeye > 0.5, let mask = settings.redeyeMask?.cropped(to: extent) {
             let amount = min(1.0, settings.redeye / 100.0)
-            if let fixed = K.redeye.apply(extent: extent, arguments: [
+            if let fixed = applyC(K.redeye, extent, [
                 work, mask, NSNumber(value: amount)
             ]) {
                 work = fixed.cropped(to: extent)
@@ -601,7 +610,7 @@ enum ACRLensRepairEngine {
             kCIInputImageKey: image,
             kCIInputRadiusKey: radius
         ])?.outputImage ?? image
-        return K.mix.apply(extent: extent, arguments: [
+        return applyC(K.mix, extent, [
             image, g, NSNumber(value: a * 0.55)
         ])?.cropped(to: extent) ?? image
     }
@@ -677,59 +686,69 @@ enum ACRLensRepairEngine {
             """)
 
         /// 暗角校正：按 r² 三次多项式给径向增益
-        static let vignetteFix = CIColorKernel(source: """
-            kernel vec4 acrVignetteFix(__sample s, float cx, float cy, float radius,
+        static let vignetteFix = CIKernel(source: """
+            kernel vec4 acrVignetteFix(sampler s, float cx, float cy, float radius,
                                        float k1, float k2, float k3) {
-                vec2 d = destCoord() - vec2(cx, cy);
+                vec2 p = destCoord();
+                vec3 c = sample(s, p).rgb;
+                vec2 d = p - vec2(cx, cy);
                 float r = length(d) / max(radius, 1.0);
                 float r2 = r * r;
                 float gain = 1.0 + k1 * r2 + k2 * r2 * r2 + k3 * r2 * r2 * r2;
                 gain = clamp(gain, 0.25, 4.0);
-                return vec4(clamp(s.rgb * gain, 0.0, 1.0), s.a);
+                return vec4(clamp(c * gain, 0.0, 1.0), sample(s, p).a);
             }
-            """)
+""")
 
-        static let mix = CIColorKernel(source: """
-            kernel vec4 acrMix(__sample a, __sample b, float t) {
-                return vec4(mix(a.rgb, b.rgb, clamp(t, 0.0, 1.0)), a.a);
+        static let mix = CIKernel(source: """
+            kernel vec4 acrMix(sampler a, sampler b, float t) {
+                vec2 p = destCoord();
+                vec3 va = sample(a, p).rgb;
+                vec3 vb = sample(b, p).rgb;
+                return vec4(mix(va, vb, clamp(t, 0.0, 1.0)), sample(a, p).a);
             }
-            """)
+""")
 
         /// 补光：只抬暗部，保持高光
-        static let fillLight = CIColorKernel(source: """
-            kernel vec4 acrFillLight(__sample s, float amount) {
+        static let fillLight = CIKernel(source: """
+            kernel vec4 acrFillLight(sampler s, float amount) {
+                vec2 p = destCoord();
+                vec3 c = sample(s, p).rgb;
                 vec3 w = vec3(0.299, 0.587, 0.114);
-                float l = dot(s.rgb, w);
+                float l = dot(c, w);
                 float mask = 1.0 - smoothstep(0.05, 0.65, l);
                 float gain = 1.0 + amount * 1.2 * mask;
-                return vec4(clamp(s.rgb * gain, 0.0, 1.0), s.a);
+                return vec4(clamp(c * gain, 0.0, 1.0), sample(s, p).a);
             }
-            """)
+""")
 
         /// 去紫边：高频处把过高的色度往亮度拉回
-        static let defringe = CIColorKernel(source: """
-            kernel vec4 acrDefringe(__sample s, float amount) {
+        static let defringe = CIKernel(source: """
+            kernel vec4 acrDefringe(sampler s, float amount) {
+                vec2 p = destCoord();
+                vec3 c = sample(s, p).rgb;
                 vec3 w = vec3(0.299, 0.587, 0.114);
-                float l = dot(s.rgb, w);
-                float cb = s.b - l;
-                float cr = s.r - l;
+                float l = dot(c, w);
+                float cb = c.b - l;
+                float cr = c.r - l;
                 float chroma = sqrt(cb * cb + cr * cr);
                 float excess = smoothstep(0.06, 0.22, chroma);
                 float t = amount * excess;
-                vec3 neutral = vec3(l);
-                return vec4(clamp(mix(s.rgb, neutral, t), 0.0, 1.0), s.a);
+                return vec4(clamp(mix(c, vec3(l), t), 0.0, 1.0), sample(s, p).a);
             }
-            """)
+""")
 
         /// 去红眼：仅掩膜内把红通道压到 G/B 的水平
-        static let redeye = CIColorKernel(source: """
-            kernel vec4 acrRedeye(__sample s, __sample mask, float amount) {
-                float m = clamp(mask.r, 0.0, 1.0) * clamp(amount, 0.0, 1.0);
-                float gb = max(s.g, s.b);
-                float r = mix(s.r, min(s.r, gb * 1.05), m);
-                return vec4(clamp(vec3(r, s.g, s.b), 0.0, 1.0), s.a);
+        static let redeye = CIKernel(source: """
+            kernel vec4 acrRedeye(sampler s, sampler mask, float amount) {
+                vec2 p = destCoord();
+                vec3 c = sample(s, p).rgb;
+                float m = clamp(sample(mask, p).r, 0.0, 1.0) * clamp(amount, 0.0, 1.0);
+                float gb = max(c.g, c.b);
+                float r = mix(c.r, min(c.r, gb * 1.05), m);
+                return vec4(clamp(vec3(r, c.g, c.b), 0.0, 1.0), sample(s, p).a);
             }
-            """)
+""")
     }
 }
 

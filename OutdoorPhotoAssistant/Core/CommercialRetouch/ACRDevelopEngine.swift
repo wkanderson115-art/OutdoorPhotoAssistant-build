@@ -415,7 +415,7 @@ enum ACRDevelopEngine {
                                extent: CGRect) -> CIImage {
         // blacks/whites 各 100 对应 ±0.15 的端点位移（ACR 的 PV2012 大致量级）
         let black = max(-0.15, min(0.35, s.blacks / 100.0 * 0.15))
-        let white = min(1.35, max(0.65, 1.0 + s.whites / 100.0 * 0.15))
+        let white = min(1.35, max(0.65, 1.0 - s.whites / 100.0 * 0.15))
         guard let out = K.endpoints.apply(extent: extent, arguments: [
             image, NSNumber(value: black), NSNumber(value: white)
         ]) else { return image }
@@ -807,19 +807,20 @@ enum ACRDevelopEngine {
             }
             """)
 
-        static let localTone = CIColorKernel(source: """
-            kernel vec4 acrLocalTone(__sample s, __sample base, float hi, float sh) {
+        static let localTone = CIKernel(source: """
+            kernel vec4 acrLocalTone(sampler s, sampler base, float hi, float sh) {
+                vec2 p = destCoord();
+                vec3 c = sample(s, p).rgb;
+                vec3 cb = sample(base, p).rgb;
                 vec3 w = vec3(0.299, 0.587, 0.114);
-                float l = dot(s.rgb, w);
-                float lb = dot(base.rgb, w);
-                float up = max(l - lb, 0.0);
-                float dn = max(lb - l, 0.0);
-                float delta = hi * up * 1.6 - sh * dn * 1.6;
+                float l = dot(c, w);
+                float lb = dot(cb, w);
+                float delta = hi * max(l - lb, 0.0) * 1.6 - sh * max(lb - l, 0.0) * 1.6;
                 float target = clamp(l + delta, 0.0, 1.0);
                 float scale = l > 1.0e-4 ? target / l : 1.0;
-                return vec4(clamp(s.rgb * scale, 0.0, 1.0), s.a);
+                return vec4(clamp(c * scale, 0.0, 1.0), sample(s, p).a);
             }
-            """)
+""")
 
         static let contrast = CIColorKernel(source: """
             kernel vec4 acrContrast(__sample s, float pivot, float slope) {
@@ -863,42 +864,52 @@ enum ACRDevelopEngine {
             }
             """)
 
-        static let product = CIColorKernel(source: """
-            kernel vec4 acrProduct(__sample a, __sample b) {
-                return vec4(a.rgb * b.rgb, 1.0);
+        static let product = CIKernel(source: """
+            kernel vec4 acrProduct(sampler a, sampler b) {
+                vec2 p = destCoord();
+                vec3 va = sample(a, p).rgb;
+                vec3 vb = sample(b, p).rgb;
+                return vec4(va * vb, 1.0);
             }
-            """)
+""")
 
         /// a = cov / (var + eps)，偏移编码成 0.5 + a*0.25
-        static let gfA = CIColorKernel(source: """
-            kernel vec4 acrGFA(__sample mI, __sample mP, __sample mIP, __sample mII, float eps) {
-                vec3 cov = mIP.rgb - mI.rgb * mP.rgb;
-                vec3 v = mII.rgb - mI.rgb * mI.rgb;
+        static let gfA = CIKernel(source: """
+            kernel vec4 acrGFA(sampler mI, sampler mP, sampler mIP, sampler mII, float eps) {
+                vec2 p = destCoord();
+                vec3 vi = sample(mI, p).rgb;
+                vec3 vp = sample(mP, p).rgb;
+                vec3 vip = sample(mIP, p).rgb;
+                vec3 vii = sample(mII, p).rgb;
+                vec3 cov = vip - vi * vp;
+                vec3 v = vii - vi * vi;
                 vec3 a = cov / (max(v, vec3(0.0)) + vec3(eps));
-                vec3 code = clamp(vec3(0.5) + a * 0.25, 0.0, 1.0);
-                return vec4(code, 1.0);
+                return vec4(clamp(vec3(0.5) + a * 0.25, 0.0, 1.0), 1.0);
             }
-            """)
+""")
 
         /// b = meanP - a*meanI，同样偏移编码
-        static let gfB = CIColorKernel(source: """
-            kernel vec4 acrGFB(__sample mP, __sample mI, __sample aCode) {
-                vec3 a = (aCode.rgb - vec3(0.5)) * 4.0;
-                vec3 b = mP.rgb - a * mI.rgb;
-                vec3 code = clamp(vec3(0.5) + b * 0.25, 0.0, 1.0);
-                return vec4(code, 1.0);
+        static let gfB = CIKernel(source: """
+            kernel vec4 acrGFB(sampler mP, sampler mI, sampler aCode) {
+                vec2 p = destCoord();
+                vec3 vp = sample(mP, p).rgb;
+                vec3 vi = sample(mI, p).rgb;
+                vec3 a = (sample(aCode, p).rgb - vec3(0.5)) * 4.0;
+                vec3 b = vp - a * vi;
+                return vec4(clamp(vec3(0.5) + b * 0.25, 0.0, 1.0), 1.0);
             }
-            """)
+""")
 
         /// q = mean(a)*I + mean(b)
-        static let gfApply = CIColorKernel(source: """
-            kernel vec4 acrGFApply(__sample aCode, __sample bCode, __sample guide) {
-                vec3 a = (aCode.rgb - vec3(0.5)) * 4.0;
-                vec3 b = (bCode.rgb - vec3(0.5)) * 4.0;
-                vec3 q = a * guide.rgb + b;
-                return vec4(clamp(q, 0.0, 1.0), 1.0);
+        static let gfApply = CIKernel(source: """
+            kernel vec4 acrGFApply(sampler aCode, sampler bCode, sampler guide) {
+                vec2 p = destCoord();
+                vec3 a = (sample(aCode, p).rgb - vec3(0.5)) * 4.0;
+                vec3 b = (sample(bCode, p).rgb - vec3(0.5)) * 4.0;
+                vec3 g = sample(guide, p).rgb;
+                return vec4(clamp(a * g + b, 0.0, 1.0), 1.0);
             }
-            """)
+""")
 
         static let minChannel = CIColorKernel(source: """
             kernel vec4 acrMinChannel(__sample s) {
@@ -915,29 +926,33 @@ enum ACRDevelopEngine {
             }
             """)
 
-        static let dehazeApply = CIColorKernel(source: """
-            kernel vec4 acrDehazeApply(__sample s, __sample tSample, vec3 air,
+        static let dehazeApply = CIKernel(source: """
+            kernel vec4 acrDehazeApply(sampler s, sampler tSample, vec3 air,
                                        float tFloor, float th2OverA) {
-                float t = clamp(tSample.r, tFloor, 1.0);
-                vec3 I = max(s.rgb - air * th2OverA, vec3(0.0));
-                vec3 J = (I - air) / t + air;
-                return vec4(clamp(J, 0.0, 1.0), s.a);
+                vec2 p = destCoord();
+                vec3 c = sample(s, p).rgb;
+                float t = clamp(sample(tSample, p).r, tFloor, 1.0);
+                vec3 i = max(c - air * th2OverA, vec3(0.0));
+                vec3 j = (i - air) / t + air;
+                return vec4(clamp(j, 0.0, 1.0), sample(s, p).a);
             }
-            """)
+""")
 
-        static let clarityApply = CIColorKernel(source: """
-            kernel vec4 acrClarityApply(__sample s, __sample base, __sample mask, float amount) {
+        static let clarityApply = CIKernel(source: """
+            kernel vec4 acrClarityApply(sampler s, sampler base, sampler mask, float amount) {
+                vec2 p = destCoord();
+                vec3 c = sample(s, p).rgb;
+                vec3 cb = sample(base, p).rgb;
+                float m = clamp(sample(mask, p).r, 0.0, 1.0);
                 vec3 w = vec3(0.299, 0.587, 0.114);
-                float l = dot(s.rgb, w);
-                float lb = dot(base.rgb, w);
-                float detail = l - lb;
-                float m = clamp(mask.r, 0.0, 1.0);
-                float target = clamp(l + detail * amount * m, 0.0, 1.0);
+                float l = dot(c, w);
+                float lb = dot(cb, w);
+                float target = clamp(l + (l - lb) * amount * m, 0.0, 1.0);
                 float scale = l > 1.0e-4 ? target / l : 1.0;
                 scale = clamp(scale, 0.2, 5.0);
-                return vec4(clamp(s.rgb * scale, 0.0, 1.0), s.a);
+                return vec4(clamp(c * scale, 0.0, 1.0), sample(s, p).a);
             }
-            """)
+""")
 
         static let rgbToYCC = CIColorKernel(source: """
             kernel vec4 acrRGBtoYCC(__sample s) {
@@ -961,86 +976,95 @@ enum ACRDevelopEngine {
             """)
 
         /// Y 用细 eps 的结果，C1/C2 用粗 eps 的结果
-        static let yccMix = CIColorKernel(source: """
-            kernel vec4 acrYCCMix(__sample fine, __sample coarse) {
-                return vec4(fine.r, coarse.g, coarse.b, 1.0);
+        static let yccMix = CIKernel(source: """
+            kernel vec4 acrYCCMix(sampler fine, sampler coarse) {
+                vec2 p = destCoord();
+                return vec4(sample(fine, p).r, sample(coarse, p).g, sample(coarse, p).b, 1.0);
             }
-            """)
+""")
 
-        static let textureApply = CIColorKernel(source: """
-            kernel vec4 acrTextureApply(__sample ycc, __sample filtered, __sample mask, float amount) {
-                vec3 detail = ycc.rgb - filtered.rgb;
-                float m = clamp(mask.r, 0.0, 1.0);
-                vec3 out3 = ycc.rgb + detail * amount * m;
-                out3.g = clamp(out3.g, 0.0, 1.0);
-                out3.b = clamp(out3.b, 0.0, 1.0);
-                out3.r = clamp(out3.r, 0.0, 1.0);
-                return vec4(out3, 1.0);
+        static let textureApply = CIKernel(source: """
+            kernel vec4 acrTextureApply(sampler ycc, sampler filtered, sampler mask, float amount) {
+                vec2 p = destCoord();
+                vec3 c = sample(ycc, p).rgb;
+                vec3 f = sample(filtered, p).rgb;
+                float m = clamp(sample(mask, p).r, 0.0, 1.0);
+                vec3 o = c + (c - f) * amount * m;
+                return vec4(clamp(o, 0.0, 1.0), 1.0);
             }
-            """)
+""")
 
-        static let sharpenApply = CIColorKernel(source: """
-            kernel vec4 acrSharpenApply(__sample s, __sample blurred, __sample mask,
+        static let sharpenApply = CIKernel(source: """
+            kernel vec4 acrSharpenApply(sampler s, sampler blurred, sampler mask,
                                         float amount, float threshold) {
-                vec3 hp = s.rgb - blurred.rgb;
-                // 阈值：平坦区的小差不动（output_sharpen 的 threshold）
-                vec3 sign3 = sign(hp);
+                vec2 p = destCoord();
+                vec3 c = sample(s, p).rgb;
+                vec3 b = sample(blurred, p).rgb;
+                float m = clamp(sample(mask, p).r, 0.0, 1.0);
+                vec3 hp = c - b;
                 vec3 mag = max(abs(hp) - vec3(threshold), vec3(0.0));
-                vec3 shaped = sign3 * mag;
-                float m = clamp(mask.r, 0.0, 1.0);
-                vec3 out3 = s.rgb + shaped * amount * m;
-                return vec4(clamp(out3, 0.0, 1.0), s.a);
+                vec3 shaped = sign(hp) * mag;
+                vec3 o = c + shaped * amount * m;
+                return vec4(clamp(o, 0.0, 1.0), sample(s, p).a);
             }
-            """)
+""")
 
-        static let nrApply = CIColorKernel(source: """
-            kernel vec4 acrNRA(__sample s, __sample smooth, float amount, float protect, float contrast) {
+        static let nrApply = CIKernel(source: """
+            kernel vec4 acrNRA(sampler s, sampler smooth, float amount, float protect, float contrast) {
+                vec2 p = destCoord();
+                vec3 c = sample(s, p).rgb;
+                vec3 cs = sample(smooth, p).rgb;
                 vec3 w = vec3(0.299, 0.587, 0.114);
-                float l = dot(s.rgb, w);
-                float ls = dot(smooth.rgb, w);
+                float l = dot(c, w);
+                float ls = dot(cs, w);
                 float edge = abs(l - ls);
                 float gate = 1.0 - smoothstep(0.0, 0.06 + protect * 0.10, edge);
                 float target = mix(l, ls, clamp(amount, 0.0, 1.0) * gate);
                 target = clamp(target + (target - 0.5) * contrast * 0.5, 0.0, 1.0);
                 float scale = l > 1.0e-4 ? target / l : 1.0;
                 scale = clamp(scale, 0.2, 5.0);
-                return vec4(clamp(s.rgb * scale, 0.0, 1.0), s.a);
+                return vec4(clamp(c * scale, 0.0, 1.0), sample(s, p).a);
             }
-            """)
+""")
 
-        static let colorNRMerge = CIColorKernel(source: """
-            kernel vec4 acrColorNR(__sample ycc, __sample blurred, float amount, float smoothness) {
+        static let colorNRMerge = CIKernel(source: """
+            kernel vec4 acrColorNR(sampler ycc, sampler blurred, float amount, float smoothness) {
+                vec2 p = destCoord();
+                vec3 c = sample(ycc, p).rgb;
+                vec3 b = sample(blurred, p).rgb;
                 float a = clamp(amount, 0.0, 1.0) * (0.35 + smoothness * 0.65);
-                float y = ycc.r;
-                float c1 = mix(ycc.g, blurred.g, a);
-                float c2 = mix(ycc.b, blurred.b, a);
-                return vec4(y, clamp(c1, 0.0, 1.0), clamp(c2, 0.0, 1.0), 1.0);
+                float c1 = mix(c.g, b.g, a);
+                float c2 = mix(c.b, b.b, a);
+                return vec4(c.r, clamp(c1, 0.0, 1.0), clamp(c2, 0.0, 1.0), 1.0);
             }
-            """)
+""")
 
-        static let grainApply = CIColorKernel(source: """
-            kernel vec4 acrGrain(__sample s, __sample n, float amount, float freq) {
+        static let grainApply = CIKernel(source: """
+            kernel vec4 acrGrain(sampler s, sampler n, float amount, float freq) {
+                vec2 p = destCoord();
+                vec3 c = sample(s, p).rgb;
+                float g = (sample(n, p).r - 0.5) * 2.0;
                 vec3 w = vec3(0.299, 0.587, 0.114);
-                float l = dot(s.rgb, w);
-                // 噪声在中调最明显，暗部/高光按亮度衰减（film grain 的经典响应）
+                float l = dot(c, w);
                 float response = smoothstep(0.0, 0.18, l) * (1.0 - smoothstep(0.82, 1.0, l));
-                float g = (n.r - 0.5) * 2.0;
                 float local = amount * response * (0.35 + freq * 0.5);
-                vec3 out3 = s.rgb + vec3(g * local);
-                return vec4(clamp(out3, 0.0, 1.0), s.a);
+                return vec4(clamp(c + vec3(g * local), 0.0, 1.0), sample(s, p).a);
             }
-            """)
+""")
 
-        static let vignetteApply = CIColorKernel(source: """
-            kernel vec4 acrVignette(__sample s, float cx, float cy, float invR,
+        static let vignetteApply = CIKernel(source: """
+            kernel vec4 acrVignette(sampler s, float cx, float cy, float invR,
                                     float amount, float feather, float roundness) {
-                vec2 d = destCoord() - vec2(cx, cy);
+                vec2 p = destCoord();
+                vec3 c = sample(s, p).rgb;
+                vec2 d = p - vec2(cx, cy);
                 d.y = d.y / max(roundness, 0.05);
                 float r = length(d) * invR;
                 float inner = max(0.0, 1.0 - feather);
                 float t = smoothstep(inner, 1.0, r);
-                float gain = 1.0 + amount * t * (amount > 0.0 ? 0.85 : 0.9);
-                return vec4(clamp(s.rgb * gain, 0.0, 1.0), s.a);
+                float k = amount > 0.0 ? 0.85 : 0.9;
+                float gain = 1.0 + amount * t * k;
+                return vec4(clamp(c * gain, 0.0, 1.0), sample(s, p).a);
             }
             """)
     }
@@ -1594,5 +1618,17 @@ struct ACRDCPProfile {
             b += 1
         }
         return floats.withUnsafeBufferPointer { Data(buffer: $0) }
+    }
+}
+
+
+/// 多图 kernel 走 CIKernel（CIKL 不允许多个 __sample 参数，只能用 sampler + sample()）。
+/// 这里给一个与 CIColorKernel 版本同签名的入口，调用点保持不变。
+extension Optional where Wrapped == CIKernel {
+    func apply(extent: CGRect, arguments: [Any]) -> CIImage? {
+        guard let kernel = self else { return nil }
+        let pad = max(64.0, max(extent.width, extent.height) * 0.15)
+        let roi: CIKernelROICallback = { _, rect in rect.insetBy(dx: -pad, dy: -pad) }
+        return kernel.apply(extent: extent, roiCallback: roi, arguments: arguments)
     }
 }
