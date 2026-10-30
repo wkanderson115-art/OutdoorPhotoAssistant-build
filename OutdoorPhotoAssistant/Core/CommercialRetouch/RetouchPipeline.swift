@@ -348,7 +348,10 @@ final class RetouchPipeline {
         if parameters.applyLook, Self.lightroomCoreEnabled, parameters.lightroomAmount > 0.001 {
             let look = Self.resolvedLightroomLook(for: preset.look)
                 .scaled(by: parameters.lightroomAmount)
-            work = look.apply(to: work, skinMask: analysis?.skinMask, context: context)
+            // 走全链路入口：Develop（ACR 14 段）→ 镜头校正 → 几何 → 修补。
+            // 后三段参数默认全关（lens/geometry/repair 都是 no-op），所以出图和纯 Develop 一致；
+            // 但要开镜头校正/污点修复时，这里就是挂载点（也保证引擎不会被链接器裁掉）。
+            work = look.applyFull(to: work, skinMask: analysis?.skinMask, context: context)
         }
         if parameters.applyLook {
             work = engine.grade(work, look: preset.look, parameters: parameters)
