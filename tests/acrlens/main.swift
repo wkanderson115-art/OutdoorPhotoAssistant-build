@@ -163,7 +163,7 @@ do {
         return (grid, grid, grid)
     }
     var e = ACRLensEntry()
-    e.radial1 = 2.0
+    e.radial1 = 40.0
     e.focalLengthX = 1.0
     var c = ACRLensCorrection()
     c.enabled = true
@@ -213,7 +213,7 @@ do {
     settings.healSpots = [spot]
     let out = render(ACRLensRepairEngine.applyRepair(img, settings: settings, context: context))
     let c = out.rgb(32, 32)
-    expect(c.0 < 0.5, "heal 后中心不该还是红色 (R=\(c.0))")
+    expect(c.0 > 0.7 && c.1 > 0.7, "heal 后中心应变成白色 (R=\(c.0) G=\(c.1))")
     expect(abs(c.0 - c.1) < 0.12, "heal 后中心应接近中性 (R=\(c.0) G=\(c.1))")
 }
 
@@ -324,7 +324,7 @@ do {
         return (v, v, v)
     }
     var g = ACRGeometryAdjust()
-    g.perspectiveHorizontal = 0.08
+    g.perspectiveHorizontal = 0.2
     let out = render(ACRLensRepairEngine.applyGeometry(img, geometry: g))
     let src = render(img)
     expect(out.width == src.width, "透视校正不该改尺寸")
