@@ -299,7 +299,7 @@ do {
     expect(dn.std < src.std, "降噪替代应降低方差")
 
     let up = ACRLensRepairEngine.upscaleSubstitute(noisy, factor: 2)
-    expect(up.extent.width == src.width * 2, "超分替代应把宽度放大 2 倍")
+    expect(up.extent.width == CGFloat(src.width) * 2, "超分替代应把宽度放大 2 倍")
 
     let mask = ACRLensRepairEngine.subjectMaskSubstitute(noisy, context: context)
     expect(mask != nil, "主体蒙版替代应返回非空")

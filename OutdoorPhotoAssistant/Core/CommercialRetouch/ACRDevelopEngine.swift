@@ -520,9 +520,10 @@ enum ACRDevelopEngine {
         // 亮度降噪：引导滤波做保边平滑，detail 控制高频回灌
         if s.luminanceNR > 0.5 {
             let amount = min(1.0, s.luminanceNR / 100.0)
-            let radius = px.pixels(1.0 / 300.0, min: 3, max: 40)
-            let eps = 1.0e-4 + amount * 8.0e-2
-            let smooth = guidedFilter(guide: work, src: work, radius: radius, eps: eps, extent: extent)
+            // 基底用高斯：半径随强度增长，小图上也能稳定降方差；
+            // 保边交给 nrApply 的软门限（对应 cr_stage_denoise 的 edge gate）
+            let radius = px.pixels(1.0 / 400.0 + amount / 90.0, min: 2, max: 36)
+            let smooth = gaussianBlur(work, radius: radius, extent: extent)
             if let out = K.nrApply.apply(extent: extent, arguments: [
                 work, smooth, NSNumber(value: amount),
                 NSNumber(value: 1.0 - min(1.0, s.luminanceNRDetail / 100.0) * 0.85),
@@ -1018,7 +1019,7 @@ enum ACRDevelopEngine {
                 float l = dot(c, w);
                 float ls = dot(cs, w);
                 float edge = abs(l - ls);
-                float gate = 1.0 - smoothstep(0.0, 0.06 + protect * 0.10, edge);
+                float gate = 1.0 - clamp(protect, 0.0, 1.0) * 0.55 * smoothstep(0.0, 0.10, edge);
                 float target = mix(l, ls, clamp(amount, 0.0, 1.0) * gate);
                 target = clamp(target + (target - 0.5) * contrast * 0.5, 0.0, 1.0);
                 float scale = l > 1.0e-4 ? target / l : 1.0;
