@@ -258,10 +258,10 @@ run_test acrdevelop \
   "${ARTICLE_DIR}/Core/CommercialRetouch/ACRDevelopEngine.swift" \
   tests/acrdevelop/main.swift
 
-# ACR 外围引擎（tests/acrlens：镜头/几何/修补/AI 替代，11 组断言）
+# ACR 外围引擎（tests/acrlens：镜头/几何/修补/AI 替代，12 组断言）
 run_test acrlens \
   "${ARTICLE_DIR}/Core/CommercialRetouch/ACRLensRepairEngine.swift" \
-  tests/acrlens/main.swiftecho
+  tests/acrlens/main.swift
 echo "=============================================================="
 echo "== 5/5 TYPECHECK SUMMARY"
 echo "=============================================================="

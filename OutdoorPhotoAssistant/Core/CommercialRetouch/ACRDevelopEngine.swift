@@ -520,8 +520,8 @@ enum ACRDevelopEngine {
         // 亮度降噪：引导滤波做保边平滑，detail 控制高频回灌
         if s.luminanceNR > 0.5 {
             let amount = min(1.0, s.luminanceNR / 100.0)
-            let radius = px.pixels(1.0 / 500.0, min: 2, max: 24)
-            let eps = 1.0e-4 + amount * 8.0e-3
+            let radius = px.pixels(1.0 / 300.0, min: 3, max: 40)
+            let eps = 1.0e-4 + amount * 8.0e-2
             let smooth = guidedFilter(guide: work, src: work, radius: radius, eps: eps, extent: extent)
             if let out = K.nrApply.apply(extent: extent, arguments: [
                 work, smooth, NSNumber(value: amount),
