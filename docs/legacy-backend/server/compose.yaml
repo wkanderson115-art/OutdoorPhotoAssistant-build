@@ -1,0 +1,24 @@
+services:
+  api:
+    build: .
+    environment:
+      APPLE_CLIENT_ID: ${APPLE_CLIENT_ID:-}
+      ALLOWED_APPLE_SUBS: ${ALLOWED_APPLE_SUBS:-}
+      DATABASE_PATH: /data/jobs.sqlite3
+      USER_DAILY_LIMIT: ${USER_DAILY_LIMIT:-10}
+      GLOBAL_DAILY_LIMIT: ${GLOBAL_DAILY_LIMIT:-200}
+    ports: ["127.0.0.1:8080:8080"]
+    volumes: ["photo-data:/data"]
+    restart: unless-stopped
+    read_only: true
+    tmpfs: ["/tmp:size=64m,mode=1777"]
+  worker:
+    build: .
+    command: ["python", "worker.py"]
+    env_file: .env
+    volumes: ["photo-data:/data"]
+    restart: unless-stopped
+    read_only: true
+    tmpfs: ["/tmp:size=64m,mode=1777"]
+volumes:
+  photo-data:

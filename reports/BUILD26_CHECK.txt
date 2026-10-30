@@ -1,0 +1,58 @@
+== 1. project.pbxproj ==
+  PASS  pbxproj parses
+  info  file references: 30
+  info  build files: 28
+  PASS  exactly one native target
+  PASS  target is an app
+  PASS  target configurations = Debug + Release (got ['Debug', 'Release'])
+  PASS  INFOPLIST_FILE is set
+  PASS  deployment target 17.6
+  PASS  iPhone-only target
+  PASS  SWIFT_VERSION = 5.0 (valid language mode)
+== 2. sources vs disk ==
+  PASS  26 Swift files on disk (got 26)
+  PASS  Sources phase matches Swift files on disk
+== 3. resources ==
+  PASS  Assets.xcassets is in Resources
+  PASS  PrivacyInfo.xcprivacy is in Resources
+== 4. scheme ==
+  PASS  scheme XML parses
+  PASS  scheme references target A00000000000000000000004
+  PASS  LaunchAction uses Debug
+== 5. Info.plist / PrivacyInfo ==
+  PASS  Info.plist has NSCameraUsageDescription
+  PASS  Info.plist has NSPhotoLibraryAddUsageDescription
+  PASS  Info.plist has NSPhotoLibraryUsageDescription
+  PASS  Info.plist has NSLocationWhenInUseUsageDescription
+  PASS  Info.plist has NSMotionUsageDescription
+  PASS  Info.plist has UILaunchScreen
+  PASS  Info.plist has UISupportedInterfaceOrientations
+  PASS  portrait-locked
+  PASS  privacy manifest declares UserDefaults (CA92.1 reason)
+  PASS  privacy manifest declares no tracking
+== 6. asset catalog + icon ==
+  PASS  asset catalog root Contents.json valid
+  PASS  AppIcon declares 1024x1024
+  PASS  AccentColor colorset valid
+  PASS  app icon is a PNG
+  PASS  app icon is 1024x1024 (got 1024x1024)
+  PASS  app icon is RGB without alpha (color type 2)
+== 7. workflow YAML ==
+  PASS  workflow YAML parses
+  PASS  workflow has build job
+  PASS  workflow builds unsigned
+  PASS  workflow builds both Debug and Release
+== 8. Swift syntax + risky API scan ==
+  PASS  all Swift files parse (6539 lines)
+  PASS  absent: recommendedLensApertureStops (iOS 27 API (not available in iOS 26 SDK))
+  PASS  absent: AVCaptureISOAuto (iOS 27 constant / renamed in Swift)
+  PASS  absent: AVCaptureExposureDurationAuto (iOS 27 constant / renamed in Swift)
+  PASS  absent: setExposureModeCustom(lensAperture (iOS 27 API)
+  PASS  absent: supportsExposureModeCustom(lensAperture (iOS 27 API)
+  PASS  absent: isAppleProRAWSupported (removed feature (was broken))
+  PASS  absent: AVCaptureSystemZoomSlider (dropped for first-compile safety)
+  PASS  absent: AVCaptureEventInteraction (dropped for first-compile safety)
+  PASS  absent: lowLightBoostSupported (typo API (should be isLowLightBoostSupported))
+  PASS  aesthetics request guarded by #available(iOS 18.0)
+
+RESULT: 0 failures (all checks passed)

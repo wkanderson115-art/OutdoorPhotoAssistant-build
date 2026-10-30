@@ -1,0 +1,8 @@
+{
+  "hardware settling gate": true,
+  "fresh observation required": true,
+  "subject continuity": true,
+  "matte-only blur": true,
+  "intent framing": true,
+  "motion manual fallback": true
+}

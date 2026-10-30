@@ -1,0 +1,4 @@
+PASS: 24 unique lessons, 7 categories
+PASS: 13 shared camera/settings preferences use matching keys
+PASS: old director and score cards removed from capture
+NOTE: source checks only; UI behavior not executed on iOS

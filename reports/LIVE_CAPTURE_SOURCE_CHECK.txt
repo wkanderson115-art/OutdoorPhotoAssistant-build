@@ -1,0 +1,8 @@
+PASS: default auto capture
+PASS: default live beauty
+PASS: upgrade migration
+PASS: one shutter readiness path
+PASS: retry from analysis tick
+PASS: rearm after composition changes
+PASS: visual subject framing
+PASS: overlay hit testing disabled

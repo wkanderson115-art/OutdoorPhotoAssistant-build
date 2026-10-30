@@ -1,0 +1,244 @@
+{
+  "set_consistency": {
+    "frames": 5,
+    "max_skin_de_before": 14.371,
+    "max_skin_de_after": 0.517,
+    "exposure_spread_before_ev": 0.148,
+    "exposure_spread_after_ev": 0.0025,
+    "passed": true
+  },
+  "reshape": {
+    "face_only": {
+      "max_displacement_px": 1.818,
+      "max_displacement_ratio": 0.00151,
+      "max_neighbour_step_px": 0.052,
+      "border_max_px": 0.0,
+      "mean_displacement_px": 0.0679,
+      "neutral": false,
+      "cap_ratio": 0.06,
+      "smooth_ok": true,
+      "edge_ok": true,
+      "cap_ok": true
+    },
+    "full": {
+      "max_displacement_px": 4.927,
+      "max_displacement_ratio": 0.00411,
+      "max_neighbour_step_px": 0.0979,
+      "border_max_px": 0.0,
+      "mean_displacement_px": 0.3799,
+      "neutral": false,
+      "cap_ratio": 0.06,
+      "smooth_ok": true,
+      "edge_ok": true,
+      "cap_ok": true
+    },
+    "extreme": {
+      "max_displacement_px": 8.209,
+      "max_displacement_ratio": 0.00684,
+      "max_neighbour_step_px": 0.1959,
+      "border_max_px": 0.0,
+      "mean_displacement_px": 0.6372,
+      "neutral": false,
+      "cap_ratio": 0.06,
+      "smooth_ok": true,
+      "edge_ok": true,
+      "cap_ok": true
+    },
+    "neutral": {
+      "max_displacement_px": 0.0,
+      "max_displacement_ratio": 0.0,
+      "max_neighbour_step_px": 0.0,
+      "border_max_px": 0.0,
+      "mean_displacement_px": 0.0,
+      "neutral": true,
+      "cap_ratio": 0.06,
+      "smooth_ok": true,
+      "edge_ok": true,
+      "cap_ok": true
+    }
+  },
+  "reshape_passed": true,
+  "id_photo": {
+    "oneInch": {
+      "pixel_size": [
+        295,
+        413
+      ],
+      "crop": {
+        "output_px": [
+          295,
+          413
+        ],
+        "scale": 0.6919,
+        "crop_px": [
+          426,
+          597
+        ],
+        "eye_line_target_ratio": 0.44,
+        "eye_line_actual_ratio": 0.2065,
+        "head_ratio": 0.66
+      },
+      "sheet_6inch": {
+        "paper_px": [
+          1795,
+          1204
+        ],
+        "cols": 5,
+        "rows": 2,
+        "count": 10,
+        "gap_px": 23
+      }
+    },
+    "smallOneInch": {
+      "pixel_size": [
+        260,
+        378
+      ],
+      "crop": {
+        "output_px": [
+          260,
+          378
+        ],
+        "scale": 0.6332,
+        "crop_px": [
+          411,
+          597
+        ],
+        "eye_line_target_ratio": 0.44,
+        "eye_line_actual_ratio": 0.2065,
+        "head_ratio": 0.66
+      },
+      "sheet_6inch": {
+        "paper_px": [
+          1795,
+          1204
+        ],
+        "cols": 6,
+        "rows": 3,
+        "count": 18,
+        "gap_px": 23
+      }
+    },
+    "twoInch": {
+      "pixel_size": [
+        413,
+        579
+      ],
+      "crop": {
+        "output_px": [
+          413,
+          579
+        ],
+        "scale": 0.9699,
+        "crop_px": [
+          426,
+          597
+        ],
+        "eye_line_target_ratio": 0.44,
+        "eye_line_actual_ratio": 0.2065,
+        "head_ratio": 0.66
+      },
+      "sheet_6inch": {
+        "paper_px": [
+          1795,
+          1204
+        ],
+        "cols": 4,
+        "rows": 2,
+        "count": 8,
+        "gap_px": 23
+      }
+    },
+    "smallTwoInch": {
+      "pixel_size": [
+        413,
+        531
+      ],
+      "crop": {
+        "output_px": [
+          413,
+          531
+        ],
+        "scale": 0.8895,
+        "crop_px": [
+          464,
+          597
+        ],
+        "eye_line_target_ratio": 0.44,
+        "eye_line_actual_ratio": 0.2065,
+        "head_ratio": 0.66
+      },
+      "sheet_6inch": {
+        "paper_px": [
+          1795,
+          1204
+        ],
+        "cols": 4,
+        "rows": 2,
+        "count": 8,
+        "gap_px": 23
+      }
+    },
+    "passport": {
+      "pixel_size": [
+        390,
+        567
+      ],
+      "crop": {
+        "output_px": [
+          390,
+          567
+        ],
+        "scale": 1.0362,
+        "crop_px": [
+          376,
+          547
+        ],
+        "eye_line_target_ratio": 0.44,
+        "eye_line_actual_ratio": 0.2065,
+        "head_ratio": 0.72
+      },
+      "sheet_6inch": {
+        "paper_px": [
+          1795,
+          1204
+        ],
+        "cols": 4,
+        "rows": 2,
+        "count": 8,
+        "gap_px": 23
+      }
+    },
+    "visaUS": {
+      "pixel_size": [
+        602,
+        602
+      ],
+      "crop": {
+        "output_px": [
+          602,
+          602
+        ],
+        "scale": 1.0543,
+        "crop_px": [
+          571,
+          571
+        ],
+        "eye_line_target_ratio": 0.44,
+        "eye_line_actual_ratio": 0.2065,
+        "head_ratio": 0.69
+      },
+      "sheet_6inch": {
+        "paper_px": [
+          1795,
+          1204
+        ],
+        "cols": 2,
+        "rows": 1,
+        "count": 2,
+        "gap_px": 23
+      }
+    }
+  },
+  "id_passed": true
+}

@@ -1,0 +1,1 @@
+BUILD BLOCKED: macOS and full Xcode 26+ are required; Linux cannot build an iPhone app.

@@ -1,0 +1,6 @@
+PASS: countdown removed
+PASS: analysis tick retries
+PASS: composition required
+PASS: zoom must settle
+PASS: exposure sharpness motion gate
+PASS: disarm before capture

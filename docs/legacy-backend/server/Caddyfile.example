@@ -1,0 +1,4 @@
+# Replace with a domain you control; run Caddy on the host, not inside api container.
+photos.your-domain.com {
+    reverse_proxy 127.0.0.1:8080
+}

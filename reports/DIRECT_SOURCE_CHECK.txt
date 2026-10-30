@@ -1,0 +1,16 @@
+PASS: direct official endpoints present
+PASS: backend client and Apple cloud login removed
+PASS: no deployment at repository root
+PASS: no backend URL in app plist
+PASS: no Apple-login signing entitlement
+PASS: keys saved only to Keychain
+PASS: secure input does not load saved key text
+PASS: real photo bytes uploaded
+PASS: result URL persisted before downloading
+PASS: recovery does not request generation
+PASS: download-only block does not attach API key
+PASS: new jobs identify direct transport
+PASS: generated versions deduplicate by job id
+PASS: natural policy remains active
+PASS: camera still uses live effects
+PASS: CI no longer requires backend deployment

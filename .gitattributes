@@ -1,0 +1,4 @@
+# Xcode's project parser is stricter than the Python project validator about
+# carriage returns. Keep project metadata in a single portable line ending.
+*.pbxproj text eol=lf
+*.xcscheme text eol=lf

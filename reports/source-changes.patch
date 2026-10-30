@@ -1,0 +1,1017 @@
+--- original/.github/workflows/ios-unsigned-build.yml
++++ repaired/.github/workflows/ios-unsigned-build.yml
+@@ -3,76 +3,51 @@
+ on:
+   workflow_dispatch:
+   push:
+-    branches: [ main ]
++    branches: [main, work]
++  pull_request:
+ 
+ permissions:
+   contents: read
+ 
+ jobs:
+   build:
+-    name: Build unsigned IPA
+     runs-on: macos-latest
+     timeout-minutes: 40
+-
+     steps:
+-      - name: Checkout
+-        uses: actions/checkout@v4
+-
+-      - name: Show toolchain
++      - uses: actions/checkout@v4
++      - name: Select newest installed Xcode
+         run: |
++          set -euo pipefail
++          XCODE=$(find /Applications -maxdepth 1 -name 'Xcode*.app' | sort -V | tail -n 1)
++          test -n "$XCODE"
++          sudo xcode-select --switch "$XCODE/Contents/Developer"
+           xcodebuild -version
+           xcodebuild -showsdks
+-
+-      # Debug 也编一遍：确认工程里 Debug/Release 两套配置都完整（原工程缺 Debug 配置）
+-      - name: Build Debug
++      - uses: actions/setup-python@v5
++        with:
++          python-version: '3.12'
++      - name: Install verification dependencies
++        run: python -m pip install -r scripts/requirements-check.txt
++      - name: Verify project and Swift syntax
++        run: python scripts/verify.py
++      - name: Run shutter decision tests
+         run: |
+-          set -euo pipefail
+-          xcodebuild \
+-            -project OutdoorPhotoAssistant.xcodeproj \
+-            -scheme OutdoorPhotoAssistant \
+-            -configuration Debug \
+-            -destination 'generic/platform=iOS' \
+-            -derivedDataPath build/Debug \
+-            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO DEVELOPMENT_TEAM="" \
+-            build 2>&1 | tee build-debug.log
+-
+-      - name: Build Release
+-        run: |
+-          set -euo pipefail
+-          xcodebuild \
+-            -project OutdoorPhotoAssistant.xcodeproj \
+-            -scheme OutdoorPhotoAssistant \
+-            -configuration Release \
+-            -destination 'generic/platform=iOS' \
+-            -derivedDataPath build/Release \
+-            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO DEVELOPMENT_TEAM="" \
+-            build 2>&1 | tee build-release.log
+-
+-      - name: Package unsigned IPA
+-        run: |
+-          set -euo pipefail
+-          APP=$(find build/Release/Build/Products/Release-iphoneos -maxdepth 1 -name '*.app' -type d | head -n 1)
+-          test -n "$APP"
+-          rm -rf build/Payload
+-          mkdir -p build/Payload
+-          cp -R "$APP" build/Payload/
+-          cd build
+-          /usr/bin/zip -qry OutdoorPhotoAssistant-unsigned.ipa Payload
+-          ls -lh OutdoorPhotoAssistant-unsigned.ipa
+-
+-      - name: Upload IPA
++          mkdir -p build
++          xcrun swiftc OutdoorPhotoAssistant/Core/Analysis/SmartShutterEngine.swift tests/main.swift -o build/shutter-tests
++          build/shutter-tests
++      - name: Build Debug and Release and package unsigned IPA
++        run: bash scripts/build_unsigned_ipa.sh
++      - name: Upload unsigned IPA
+         uses: actions/upload-artifact@v4
+         with:
+           name: OutdoorPhotoAssistant-unsigned-ipa
+           path: build/OutdoorPhotoAssistant-unsigned.ipa
++          if-no-files-found: error
+           retention-days: 30
+-
+-      - name: Upload build logs on failure
+-        if: failure()
++      - name: Upload build logs
++        if: always()
+         uses: actions/upload-artifact@v4
+         with:
+           name: build-logs
+-          path: |
+-            build-debug.log
+-            build-release.log
++          path: build/*.log
+           if-no-files-found: ignore
+--- original/OutdoorPhotoAssistant/App/OutdoorPhotoAssistantApp.swift
++++ repaired/OutdoorPhotoAssistant/App/OutdoorPhotoAssistantApp.swift
+@@ -2,8 +2,6 @@
+ 
+ @main
+ struct OutdoorPhotoAssistantApp: App {
+-    @Environment(\.scenePhase) private var scenePhase
+-
+     @StateObject private var camera = CameraService()
+     @StateObject private var motion = MotionService()
+     @StateObject private var analyzer = FrameAnalyzer()
+@@ -26,17 +24,5 @@
+                     }
+                 }
+         }
+-        .onChange(of: scenePhase) { _, phase in
+-            switch phase {
+-            case .active:
+-                self.camera.start()
+-                self.motion.start()
+-            case .background:
+-                self.camera.stop()
+-                self.motion.stop()
+-            default:
+-                break
+-            }
+-        }
+     }
+ }
+--- original/OutdoorPhotoAssistant/App/RootView.swift
++++ repaired/OutdoorPhotoAssistant/App/RootView.swift
+@@ -2,16 +2,21 @@
+ import UIKit
+ 
+ struct RootView: View {
++    @State private var selectedTab = 0
+     var body: some View {
+-        TabView {
+-            CaptureView()
++        TabView(selection: $selectedTab) {
++            CaptureView(isSelected: selectedTab == 0)
+                 .tabItem { Label("拍摄", systemImage: "camera.fill") }
++                .tag(0)
+             GalleryView()
+                 .tabItem { Label("图库", systemImage: "photo.on.rectangle") }
++                .tag(1)
+             LearningView()
+                 .tabItem { Label("学习", systemImage: "book") }
++                .tag(2)
+             SettingsView()
+                 .tabItem { Label("设置", systemImage: "gearshape") }
++                .tag(3)
+         }
+     }
+ }
+@@ -58,7 +63,7 @@
+             }
+             .navigationTitle("图库")
+             .onAppear {
+-                self.library.loadIfNeeded()
++                self.library.load()
+             }
+         }
+     }
+--- original/OutdoorPhotoAssistant/Core/Analysis/FrameAnalyzer.swift
++++ repaired/OutdoorPhotoAssistant/Core/Analysis/FrameAnalyzer.swift
+@@ -1,3 +1,4 @@
++import Combine
+ import Foundation
+ import AVFoundation
+ import CoreImage
+@@ -20,6 +21,7 @@
+ /// - 把时段（日间/黄金时段/蓝调/夜景）真正注入滤镜、调色和建议。
+ final class FrameAnalyzer: ObservableObject {
+     @Published var subject = SubjectInfo()
++    @Published var frameAspectRatio: CGFloat = 0.75
+     @Published var brightness: Double = 0.5
+     @Published var horizonAngle: Double = 0
+     @Published var compositionScore: Int = 0
+@@ -111,7 +113,7 @@
+         let brightness = Self.measureBrightness(buffer)
+         let sharpness = Self.measureSharpness(buffer)
+ 
+-        let orientation: CGImagePropertyOrientation = position == .front ? .leftMirrored : .right
++        let orientation: CGImagePropertyOrientation = position == .front ? .upMirrored : .up
+         let handler = VNImageRequestHandler(cvPixelBuffer: buffer, orientation: orientation, options: [:])
+         var requests: [VNImageBasedRequest] = [faceRequest, humanRequest, saliencyRequest, horizonRequest]
+         if classify { requests.append(classifyRequest) }
+@@ -178,13 +180,16 @@
+         let readyReason = ready ? "最佳构图已锁定，可以拍摄" : "调整角度、水平或光线后再拍"
+ 
+         guard publish else { return }
++        let sceneName = effectiveScene
++        let aspectRatio = CGFloat(CVPixelBufferGetWidth(buffer)) / CGFloat(max(1, CVPixelBufferGetHeight(buffer)))
+ 
+         DispatchQueue.main.async {
+             self.subject = info
++            self.frameAspectRatio = aspectRatio
+             self.brightness = brightness
+             self.horizonAngle = horizon
+             self.compositionScore = score
+-            self.detectedScene = effectiveScene
++            self.detectedScene = sceneName
+             self.sceneConfidence = sceneConfidence
+             self.recommendedFilter = filter
+             self.autoGrade = grade
+@@ -195,12 +200,12 @@
+             self.qualityComposition = score
+             self.qualitySharpness = sharpness
+             self.qualityLevel = level
+-            self.directorTitle = Self.directorTitle(scene: effectiveScene, score: score)
++            self.directorTitle = Self.directorTitle(scene: sceneName, score: score)
+             self.directorInstruction = Self.directorInstruction(subject: info,
+-                                                                scene: effectiveScene,
++                                                                scene: sceneName,
+                                                                 horizon: horizon,
+                                                                 score: score)
+-            self.lightAdvice = Self.lightAdvice(scene: effectiveScene, brightness: brightness, period: period)
++            self.lightAdvice = Self.lightAdvice(scene: sceneName, brightness: brightness, period: period)
+             self.autoCaptureReady = ready
+             self.autoCaptureHeld = held
+             self.autoCaptureReason = readyReason
+@@ -222,7 +227,7 @@
+             let horizonRequest = VNDetectHorizonRequest()
+             var requests: [VNRequest] = [faceRequest, humanRequest, horizonRequest]
+ 
+-            var aestheticsRequest: VNCalculateImageAestheticsScoresRequest?
++            var aestheticsRequest: VNRequest?
+             if #available(iOS 18.0, *) {
+                 let request = VNCalculateImageAestheticsScoresRequest()
+                 aestheticsRequest = request
+@@ -241,7 +246,11 @@
+ 
+             let brightness = Self.measureImageBrightness(cgImage)
+             let horizon = Double(horizonRequest.results?.first?.angle ?? 0)
+-            let aesthetics = aestheticsRequest?.results?.first?.overallScore
++            var aesthetics: Float?
++            if #available(iOS 18.0, *),
++               let request = aestheticsRequest as? VNCalculateImageAestheticsScoresRequest {
++                aesthetics = request.results?.first?.overallScore
++            }
+             let score = Self.composeScore(subject: info, brightness: brightness, horizon: horizon)
+             let aestheticValue = aesthetics.map { Double($0) }
+             completion(aestheticValue, score, horizon, info)
+@@ -403,9 +412,9 @@
+ 
+         let width = CVPixelBufferGetWidth(buffer)
+         let height = CVPixelBufferGetHeight(buffer)
+-        let stride = CVPixelBufferGetBytesPerRow(buffer)
++        let bytesPerRow = CVPixelBufferGetBytesPerRow(buffer)
+         let widthBytes = width * 4
+-        guard stride >= widthBytes else { return 0.5 }
++        guard bytesPerRow >= widthBytes else { return 0.5 }
+ 
+         let ptr = base.assumingMemoryBound(to: UInt8.self)
+         let stepX = max(1, width / 24)
+@@ -418,7 +427,7 @@
+         var weightTotal = 0.0
+         for y in stride(from: 0, to: height, by: stepY) {
+             for x in stride(from: 0, to: width, by: stepX) {
+-                let index = y * stride + x * 4
++                let index = y * bytesPerRow + x * 4
+                 let blue = Double(ptr[index])
+                 let green = Double(ptr[index + 1])
+                 let red = Double(ptr[index + 2])
+@@ -440,8 +449,8 @@
+ 
+         let width = CVPixelBufferGetWidth(buffer)
+         let height = CVPixelBufferGetHeight(buffer)
+-        let stride = CVPixelBufferGetBytesPerRow(buffer)
+-        guard stride >= width * 4 else { return 60 }
++        let bytesPerRow = CVPixelBufferGetBytesPerRow(buffer)
++        guard bytesPerRow >= width * 4 else { return 60 }
+ 
+         let ptr = base.assumingMemoryBound(to: UInt8.self)
+         let stepX = max(2, width / 48)
+@@ -449,7 +458,7 @@
+         guard width > stepX * 2, height > stepY * 2 else { return 60 }
+ 
+         func luma(_ px: Int, _ py: Int) -> Double {
+-            let index = py * stride + px * 4
++            let index = py * bytesPerRow + px * 4
+             return (0.2126 * Double(ptr[index + 2]) + 0.7152 * Double(ptr[index + 1]) + 0.0722 * Double(ptr[index])) / 255.0
+         }
+ 
+--- original/OutdoorPhotoAssistant/Core/Analysis/PortraitBeautyEngine.swift
++++ repaired/OutdoorPhotoAssistant/Core/Analysis/PortraitBeautyEngine.swift
+@@ -129,7 +129,7 @@
+ 
+         let b = face.boundingBox
+         let rect = CGRect(x: b.minX * size.width,
+-                          y: (1 - b.maxY) * size.height,
++                          y: b.minY * size.height,
+                           width: b.width * size.width,
+                           height: b.height * size.height)
+         ctx.setFillColor(CGColor(gray: 1, alpha: 1))
+@@ -140,7 +140,7 @@
+             for region in [landmarks.leftEye, landmarks.rightEye, landmarks.outerLips].compactMap({ $0 }) {
+                 let points = region.normalizedPoints.map { p in
+                     CGPoint(x: (b.minX + p.x * b.width) * size.width,
+-                            y: (1 - (b.minY + p.y * b.height)) * size.height)
++                            y: (b.minY + p.y * b.height) * size.height)
+                 }
+                 drawPolygon(points, in: ctx)
+             }
+@@ -156,7 +156,7 @@
+         let b = face.boundingBox
+         let points = region.normalizedPoints.map { p in
+             CGPoint(x: (b.minX + p.x * b.width) * size.width,
+-                    y: (1 - (b.minY + p.y * b.height)) * size.height)
++                    y: (b.minY + p.y * b.height) * size.height)
+         }
+         ctx.setFillColor(CGColor(gray: 1, alpha: 1))
+         drawPolygon(points, in: ctx)
+--- original/OutdoorPhotoAssistant/Core/Camera/AdaptiveCameraEngine.swift
++++ repaired/OutdoorPhotoAssistant/Core/Camera/AdaptiveCameraEngine.swift
+@@ -75,16 +75,13 @@
+             if device.isSmoothAutoFocusSupported {
+                 device.isSmoothAutoFocusEnabled = true
+             }
+-            if device.isSubjectAreaChangeMonitoringSupported {
+-                device.isSubjectAreaChangeMonitoringEnabled = true
+-            }
++            device.isSubjectAreaChangeMonitoringEnabled = true
+             if device.isLowLightBoostSupported {
+                 device.automaticallyEnablesLowLightBoostWhenAvailable = true
+             }
+-            if profile.enableHDR,
+-               device.activeFormat.isVideoHDRSupported,
+-               !device.isVideoHDREnabled {
+-                device.isVideoHDREnabled = true
++            if device.activeFormat.isVideoHDRSupported {
++                device.automaticallyAdjustsVideoHDREnabled = false
++                device.isVideoHDREnabled = profile.enableHDR
+             }
+         } catch {
+             // 个别机型不支持其中某项时，保留其它已成功设置的能力。
+@@ -97,16 +94,15 @@
+         refreshProfile()
+         settings.flashMode = .off
+         settings.photoQualityPrioritization = profile.preferQualityCapture ? .quality : .balanced
+-        settings.isAutoVirtualDeviceFusionEnabled = true
+-        settings.isAutoContentAwareDistortionCorrectionEnabled = true
++        if output.isVirtualDeviceFusionSupported {
++            settings.isAutoVirtualDeviceFusionEnabled = true
++        }
++        if output.isContentAwareDistortionCorrectionEnabled {
++            settings.isAutoContentAwareDistortionCorrectionEnabled = true
++        }
+ 
+         if highQuality && profile.allowMaxDimensions {
+-            let maxDimension = output.supportedMaxPhotoDimensions.max { lhs, rhs in
+-                Int64(lhs.width) * Int64(lhs.height) < Int64(rhs.width) * Int64(rhs.height)
+-            }
+-            if let maxDimension {
+-                settings.maxPhotoDimensions = maxDimension
+-            }
++            settings.maxPhotoDimensions = output.maxPhotoDimensions
+         }
+ 
+         // 关键：只有输出层真的打开了 depth / matte，才能往照片请求里加，
+--- original/OutdoorPhotoAssistant/Core/Camera/CameraService.swift
++++ repaired/OutdoorPhotoAssistant/Core/Camera/CameraService.swift
+@@ -35,6 +35,8 @@
+     private(set) var currentDevice: AVCaptureDevice?
+     private var currentPosition: AVCaptureDevice.Position = .back
+     private var isConfiguring = false
++    private var wantsRunning = false // Access only on sessionQueue.
++    private var requestedHighQuality = false
+     private var captureInFlight = 0
+     private var pendingUserZoom: CGFloat?
+     private var lastBias: Float = 0
+@@ -53,7 +55,7 @@
+     @Published var apertureText = "f/1.8"
+     @Published var depthSupported = false
+     @Published var portraitMatteSupported = false
+-    @Published var highQualityMode = false
++    @Published private(set) var highQualityMode = false
+     @Published var cameraEngineSummary = "均衡·画质优先"
+     @Published var cameraEngineTier = "均衡"
+     @Published var lowLightBoostActive = false
+@@ -117,7 +119,7 @@
+     private func restartIfAuthorized() {
+         guard AVCaptureDevice.authorizationStatus(for: .video) == .authorized else { return }
+         sessionQueue.async { [weak self] in
+-            guard let self, !self.isConfiguring else { return }
++            guard let self, self.wantsRunning, !self.isConfiguring else { return }
+             self.session.stopRunning()
+             self.session.startRunning()
+             let running = self.session.isRunning
+@@ -126,8 +128,10 @@
+     }
+ 
+     func start() {
++        sessionQueue.async { self.wantsRunning = true }
+         switch AVCaptureDevice.authorizationStatus(for: .video) {
+         case .authorized:
++            DispatchQueue.main.async { self.authorizationDenied = false }
+             configureAndStart()
+         case .notDetermined:
+             AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
+@@ -143,6 +147,7 @@
+     func stop() {
+         sessionQueue.async { [weak self] in
+             guard let self else { return }
++            self.wantsRunning = false
+             if self.session.isRunning { self.session.stopRunning() }
+             DispatchQueue.main.async { self.isRunning = false }
+         }
+@@ -151,7 +156,7 @@
+     private func configureAndStart() {
+         sessionQueue.async { [weak self] in
+             guard let self else { return }
+-            guard !self.session.isRunning, !self.isConfiguring else { return }
++            guard self.wantsRunning, !self.session.isRunning, !self.isConfiguring else { return }
+             self.isConfiguring = true
+             self.session.beginConfiguration()
+ 
+@@ -198,6 +203,17 @@
+     /// 必须在 startRunning 之前配置：Apple 文档要求输出级开关先打开，
+     /// 之后照片请求里才能带 depth / portrait effects matte。
+     private func configureAdvancedCaptureSupport() {
++        if let dimensions = currentDevice?.activeFormat.supportedMaxPhotoDimensions.max(by: {
++            Int64($0.width) * Int64($0.height) < Int64($1.width) * Int64($1.height)
++        }) {
++            photoOutput.maxPhotoDimensions = dimensions
++        }
++        if photoOutput.isPortraitEffectsMatteDeliveryEnabled {
++            photoOutput.isPortraitEffectsMatteDeliveryEnabled = false
++        }
++        if photoOutput.isDepthDataDeliveryEnabled {
++            photoOutput.isDepthDataDeliveryEnabled = false
++        }
+         let depth = photoOutput.isDepthDataDeliverySupported
+         if depth {
+             photoOutput.isDepthDataDeliveryEnabled = true
+@@ -205,6 +221,9 @@
+         let matte = depth && photoOutput.isPortraitEffectsMatteDeliverySupported
+         if matte {
+             photoOutput.isPortraitEffectsMatteDeliveryEnabled = true
++        }
++        if photoOutput.isContentAwareDistortionCorrectionSupported {
++            photoOutput.isContentAwareDistortionCorrectionEnabled = true
+         }
+         DispatchQueue.main.async {
+             self.depthSupported = depth
+@@ -216,12 +235,12 @@
+         if let photoConnection = photoOutput.connection(with: .video) {
+             if photoConnection.isVideoOrientationSupported { photoConnection.videoOrientation = .portrait }
+             // 前置自拍按真实方向保存（不镜像）
+-            if photoConnection.isVideoMirroringSupported { photoConnection.videoMirrored = false }
++            if photoConnection.isVideoMirroringSupported { photoConnection.automaticallyAdjustsVideoMirroring = false; photoConnection.isVideoMirrored = false }
+         }
+         if let videoConnection = videoOutput.connection(with: .video) {
+             if videoConnection.isVideoOrientationSupported { videoConnection.videoOrientation = .portrait }
+-            // 数据输出保持不镜像；分析侧对前置用 .leftMirrored 与预览一致
+-            if videoConnection.isVideoMirroringSupported { videoConnection.videoMirrored = false }
++            // portrait physically rotates data buffers; Vision uses .up / .upMirrored.
++            if videoConnection.isVideoMirroringSupported { videoConnection.automaticallyAdjustsVideoMirroring = false; videoConnection.isVideoMirrored = false }
+         }
+     }
+ 
+@@ -232,6 +251,21 @@
+             session.removeInput(input)
+             self.input = nil
+         }
++        currentDevice = nil
++    }
++
++    /// Restore a working input if the requested camera is unavailable.
++    private func replaceCamera(position: AVCaptureDevice.Position, userZoom: CGFloat) -> Bool {
++        let previousInput = input
++        let previousDevice = currentDevice
++        removeCurrentInput()
++        if installCamera(position: position, userZoom: userZoom) { return true }
++        if let previousInput, session.canAddInput(previousInput) {
++            session.addInput(previousInput)
++            input = previousInput
++            currentDevice = previousDevice
++        }
++        return false
+     }
+ 
+     private func bestBackDevice() -> AVCaptureDevice? {
+@@ -242,7 +276,7 @@
+         let discovery = AVCaptureDevice.DiscoverySession(deviceTypes: types,
+                                                          mediaType: .video,
+                                                          position: .back)
+-        return discovery.devices.first
++        return types.compactMap { type in discovery.devices.first { $0.deviceType == type } }.first
+             ?? AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back)
+     }
+ 
+@@ -278,7 +312,7 @@
+         stateLock.unlock()
+ 
+         engine.configure(device)
+-        applyDeviceZoom(device, factor: 1)
++        applyDeviceZoom(device, factor: deviceZoomFactor(device, userZoom: userZoom))
+         publishHardwareState(device)
+ 
+         let aperture = device.lensAperture
+@@ -287,6 +321,13 @@
+             self.apertureText = String(format: "f/%.1f", aperture)
+         }
+         return true
++    }
++
++    private func deviceZoomFactor(_ device: AVCaptureDevice, userZoom: CGFloat) -> CGFloat {
++        if device.deviceType == .builtInUltraWideCamera { return max(1, userZoom * 2) }
++        let hasUltraWide = device.constituentDevices.contains { $0.deviceType == .builtInUltraWideCamera }
++        let base = hasUltraWide ? (device.virtualDeviceSwitchOverVideoZoomFactors.first?.doubleValue ?? 2) : 1
++        return userZoom * CGFloat(base)
+     }
+ 
+     private func applyDeviceZoom(_ device: AVCaptureDevice, factor: CGFloat) {
+@@ -308,9 +349,10 @@
+     }
+ 
+     func setZoom(_ userZoom: CGFloat) {
+-        let target = max(0.5, min(userZoom, 4))
+         sessionQueue.async { [weak self] in
+             guard let self else { return }
++            let minimum: CGFloat = self.currentPosition == .back && self.ultraWideDevice() != nil ? 0.5 : 1
++            let target = max(minimum, min(userZoom, 4))
+             if self.isCaptureInFlight {
+                 self.stateLock.lock()
+                 self.pendingUserZoom = target
+@@ -328,8 +370,8 @@
+ 
+         if needsUltra != deviceIsUltra {
+             session.beginConfiguration()
+-            removeCurrentInput()
+-            let installed = installCamera(position: currentPosition, userZoom: target)
++            let installed = replaceCamera(position: currentPosition, userZoom: target)
++            configureAdvancedCaptureSupport()
+             configureConnections()
+             session.commitConfiguration()
+             if !installed {
+@@ -337,7 +379,7 @@
+                 return
+             }
+         } else if let device = currentDevice {
+-            applyDeviceZoom(device, factor: needsUltra ? 1 : target)
++            applyDeviceZoom(device, factor: deviceZoomFactor(device, userZoom: target))
+         }
+ 
+         updateZoomOptions()
+@@ -361,8 +403,8 @@
+             let next: AVCaptureDevice.Position = self.currentPosition == .back ? .front : .back
+ 
+             self.session.beginConfiguration()
+-            self.removeCurrentInput()
+-            let installed = self.installCamera(position: next, userZoom: 1)
++            let installed = self.replaceCamera(position: next, userZoom: 1)
++            self.configureAdvancedCaptureSupport()
+             self.configureConnections()
+             self.session.commitConfiguration()
+ 
+@@ -436,19 +478,20 @@
+ 
+     // MARK: - 拍照
+ 
++    func setHighQualityMode(_ enabled: Bool) {
++        highQualityMode = enabled
++        sessionQueue.async { self.requestedHighQuality = enabled }
++    }
++
+     func capture() {
+         sessionQueue.async { [weak self] in
+             guard let self else { return }
+-            guard self.session.isRunning, !self.isConfiguring else { return }
++            guard self.session.isRunning, !self.isConfiguring, !self.isCaptureInFlight else { return }
+ 
+             let settings = AVCapturePhotoSettings()
+             settings.flashMode = .off
+ 
+-            self.stateLock.lock()
+-            let highQuality = self.highQualityMode
+-            self.stateLock.unlock()
+-
+-            self.engine.prepare(settings, output: self.photoOutput, highQuality: highQuality)
++            self.engine.prepare(settings, output: self.photoOutput, highQuality: self.requestedHighQuality)
+             self.configureConnections()
+ 
+             self.stateLock.lock()
+--- original/OutdoorPhotoAssistant/Core/Location/LocationService.swift
++++ repaired/OutdoorPhotoAssistant/Core/Location/LocationService.swift
+@@ -1,3 +1,4 @@
++import Combine
+ import CoreLocation
+ import Foundation
+ 
+@@ -21,7 +22,7 @@
+ 
+     func start() {
+         guard CLLocationManager.locationServicesEnabled() else {
+-            updatePeriod()
++            updatePeriod(sunrise: sunrise, sunset: sunset)
+             return
+         }
+         if !started {
+@@ -33,10 +34,11 @@
+                 manager.startUpdatingLocation()
+             }
+         }
+-        updatePeriod()
++        updatePeriod(sunrise: sunrise, sunset: sunset)
+     }
+ 
+     func stop() {
++        started = false
+         manager.stopUpdatingLocation()
+     }
+ 
+@@ -44,7 +46,7 @@
+         let status = manager.authorizationStatus
+         let denied = status == .denied || status == .restricted
+         DispatchQueue.main.async { self.authorizationDenied = denied }
+-        if status == .authorizedAlways || status == .authorizedWhenInUse {
++        if started && (status == .authorizedAlways || status == .authorizedWhenInUse) {
+             manager.startUpdatingLocation()
+         }
+     }
+--- original/OutdoorPhotoAssistant/Core/Storage/PhotoLibraryService.swift
++++ repaired/OutdoorPhotoAssistant/Core/Storage/PhotoLibraryService.swift
+@@ -1,3 +1,4 @@
++import Combine
+ import Foundation
+ import ImageIO
+ import Photos
+@@ -17,6 +18,7 @@
+ 
+     private let imageManager = PHCachingImageManager()
+     private var didLoad = false
++    private var loadGeneration = UUID()
+ 
+     func loadIfNeeded() {
+         guard !didLoad else { return }
+@@ -25,18 +27,24 @@
+     }
+ 
+     func load() {
++        didLoad = true
++        let generation = UUID()
++        loadGeneration = generation
+         let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+         switch status {
+         case .notDetermined:
+             PHPhotoLibrary.requestAuthorization(for: .readWrite) { [weak self] newStatus in
+-                self?.handleLoadAuthorization(newStatus)
++                DispatchQueue.main.async {
++                    self?.handleLoadAuthorization(newStatus, generation: generation)
++                }
+             }
+         default:
+-            handleLoadAuthorization(status)
++            handleLoadAuthorization(status, generation: generation)
+         }
+     }
+ 
+-    private func handleLoadAuthorization(_ status: PHAuthorizationStatus) {
++    private func handleLoadAuthorization(_ status: PHAuthorizationStatus, generation: UUID) {
++        guard generation == loadGeneration else { return }
+         guard status == .authorized || status == .limited else {
+             DispatchQueue.main.async { self.accessDenied = true }
+             return
+@@ -59,21 +67,24 @@
+ 
+         assets.enumerateObjects { asset, index, _ in
+             group.enter()
++            var completed = false
+             self.imageManager.requestImage(for: asset,
+                                            targetSize: CGSize(width: 320, height: 320),
+                                            contentMode: .aspectFill,
+                                            options: request) { image, _ in
+-                defer { group.leave() }
+-                guard let image else { return }
+                 lock.lock()
+-                collected.append((index, image))
++                guard !completed else { lock.unlock(); return }
++                completed = true
++                if let image { collected.append((index, image)) }
+                 lock.unlock()
++                group.leave()
+             }
+         }
+ 
+         group.notify(queue: .main) { [weak self] in
+-            self?.accessDenied = false
+-            self?.recent = collected.sorted { $0.0 < $1.0 }.map { $0.1 }
++            guard let self, generation == self.loadGeneration else { return }
++            self.accessDenied = false
++            self.recent = collected.sorted { $0.0 < $1.0 }.map { $0.1 }
+         }
+     }
+ 
+@@ -82,7 +93,13 @@
+                   styledImage: UIImage,
+                   keepOriginal: Bool = true,
+                   completion: ((Bool) -> Void)? = nil) {
+-        let styledData = styledImage.jpegData(compressionQuality: 0.95)
++        guard let styledData = styledImage.jpegData(compressionQuality: 0.95) else {
++            DispatchQueue.main.async { [weak self] in
++                self?.lastSaveError = "照片编码失败，未保存任何照片"
++                completion?(false)
++            }
++            return
++        }
+ 
+         PHPhotoLibrary.requestAuthorization(for: .addOnly) { [weak self] status in
+             guard status == .authorized || status == .limited else {
+@@ -102,7 +119,7 @@
+                     options.uniformTypeIdentifier = originalType
+                     request.addResource(with: .photo, data: originalData, options: options)
+                 }
+-                if let styledData {
++                do {
+                     let request = PHAssetCreationRequest.forAsset()
+                     let options = PHAssetResourceCreationOptions()
+                     options.uniformTypeIdentifier = "public.jpeg"
+@@ -111,6 +128,7 @@
+             }, completionHandler: { success, error in
+                 DispatchQueue.main.async {
+                     self?.lastSaveError = error?.localizedDescription
++                    if success, self?.didLoad == true { self?.load() }
+                     completion?(success)
+                 }
+             })
+--- original/OutdoorPhotoAssistant/Features/Capture/CaptureView.swift
++++ repaired/OutdoorPhotoAssistant/Features/Capture/CaptureView.swift
+@@ -2,6 +2,8 @@
+ import UIKit
+ 
+ struct CaptureView: View {
++    let isSelected: Bool
++    @Environment(\.scenePhase) private var scenePhase
+     @EnvironmentObject var camera: CameraService
+     @EnvironmentObject var motion: MotionService
+     @EnvironmentObject var analyzer: FrameAnalyzer
+@@ -53,7 +55,9 @@
+                                scene: effectiveScene,
+                                showGrid: showGrid,
+                                horizonAngle: analyzer.horizonAngle,
+-                               framingHint: analyzer.framingHint)
++                               framingHint: analyzer.framingHint,
++                               frameAspectRatio: analyzer.frameAspectRatio)
++                .ignoresSafeArea()
+ 
+             VStack(spacing: 0) {
+                 topBar
+@@ -101,7 +105,8 @@
+             }
+         }
+         .onAppear {
+-            self.camera.highQualityMode = self.highQuality
++            guard self.isSelected else { return }
++            self.camera.setHighQualityMode(self.highQuality)
+             self.camera.start()
+             self.motion.start()
+             self.location.start()
+@@ -115,6 +120,32 @@
+             self.autoLensTask?.cancel()
+             self.toastTask?.cancel()
+         }
++        .onChange(of: scenePhase) { _, phase in
++            if phase == .active && self.isSelected {
++                self.camera.start()
++                self.motion.start()
++                self.location.start()
++            } else {
++                self.camera.stop()
++                self.motion.stop()
++                self.location.stop()
++                self.autoShotTask?.cancel()
++                self.autoLensTask?.cancel()
++            }
++        }
++        .onChange(of: isSelected) { _, selected in
++            if selected && self.scenePhase == .active {
++                self.camera.start()
++                self.motion.start()
++                self.location.start()
++            } else {
++                self.camera.stop()
++                self.motion.stop()
++                self.location.stop()
++                self.autoShotTask?.cancel()
++                self.autoLensTask?.cancel()
++            }
++        }
+         .onChange(of: camera.photoToken) { _, _ in
+             self.processLatestPhoto()
+         }
+@@ -130,8 +161,17 @@
+         .onChange(of: location.periodText) { _, period in
+             self.analyzer.setPeriod(period)
+         }
++        .onChange(of: autoCapture) { _, enabled in
++            if !enabled {
++                self.autoShotTask?.cancel()
++                self.countdown = 0
++                self.autoShotPending = false
++            } else if self.analyzer.autoCaptureReady {
++                self.startCountdown()
++            }
++        }
+         .onChange(of: highQuality) { _, value in
+-            self.camera.highQualityMode = value
++            self.camera.setHighQualityMode(value)
+         }
+         .onChange(of: library.lastSaveError) { _, error in
+             if let error {
+@@ -250,6 +290,7 @@
+                         }
+                     }
+                 }
++                .disabled(!camera.isRunning || activeRenders > 0)
+ 
+                 Spacer()
+ 
+@@ -412,7 +453,7 @@
+         self.autoShotTask = Task { @MainActor in
+             for value in [3, 2, 1] {
+                 self.countdown = value
+-                try? await Task.sleep(nanoseconds: 650_000_000)
++                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                 if Task.isCancelled {
+                     self.countdown = 0
+                     self.autoShotPending = false
+@@ -426,7 +467,7 @@
+                                                      isStable: self.motion.isStable,
+                                                      exposureScore: self.analyzer.qualityExposure,
+                                                      sharpnessScore: self.analyzer.qualitySharpness)
+-            if held && decision.action == .shootNow {
++            if self.autoCapture && held && decision.action == .shootNow {
+                 self.camera.capture()
+                 self.showToast("自动拍摄：\(decision.reason)")
+             } else {
+--- original/OutdoorPhotoAssistant/Features/Capture/CompositionOverlay.swift
++++ repaired/OutdoorPhotoAssistant/Features/Capture/CompositionOverlay.swift
+@@ -8,6 +8,7 @@
+     let showGrid: Bool
+     let horizonAngle: Double
+     let framingHint: String
++    let frameAspectRatio: CGFloat
+ 
+     var body: some View {
+         GeometryReader { geo in
+@@ -57,13 +58,18 @@
+ 
+                 if subject.rect != .zero {
+                     let rect = subject.rect
++                    let aspect = max(0.01, frameAspectRatio)
++                    let imageWidth = max(geo.size.width, geo.size.height * aspect)
++                    let imageHeight = imageWidth / aspect
+                     RoundedRectangle(cornerRadius: 8)
+                         .stroke(.cyan, lineWidth: 2)
+-                        .frame(width: rect.width * geo.size.width, height: rect.height * geo.size.height)
+-                        .position(x: rect.midX * geo.size.width, y: (1 - rect.midY) * geo.size.height)
++                        .frame(width: rect.width * imageWidth, height: rect.height * imageHeight)
++                        .position(x: rect.midX * imageWidth + (geo.size.width - imageWidth) / 2,
++                                  y: (1 - rect.midY) * imageHeight + (geo.size.height - imageHeight) / 2)
+                 }
+             }
+         }
++        .clipped()
+         .allowsHitTesting(false)
+     }
+ }
+--- original/OutdoorPhotoAssistant/Features/Review/ReviewView.swift
++++ repaired/OutdoorPhotoAssistant/Features/Review/ReviewView.swift
+@@ -22,6 +22,7 @@
+     @State private var preview: UIImage?
+     @State private var renderToken = UUID()
+     @State private var saving = false
++    @State private var rendering = false
+     @State private var status: String?
+ 
+     @State private var aesthetics: Double?
+@@ -51,6 +52,8 @@
+             .toolbar {
+                 ToolbarItem(placement: .topBarLeading) {
+                     Button("原片") {
++                        self.renderToken = UUID()
++                        self.rendering = false
+                         self.preview = self.shot.image
+                     }
+                 }
+@@ -58,7 +61,7 @@
+                     Button(saving ? "保存中…" : "保存成片") {
+                         self.save()
+                     }
+-                    .disabled(saving)
++                    .disabled(saving || rendering)
+                 }
+             }
+             .task {
+@@ -208,6 +211,7 @@
+     private func render() {
+         let token = UUID()
+         self.renderToken = token
++        self.rendering = true
+         var options = renderOptions
+         options.beauty = PortraitBeautySettings(skin: skin,
+                                                 clarity: 0.08,
+@@ -225,6 +229,7 @@
+                 DispatchQueue.main.async {
+                     guard self.renderToken == token else { return }
+                     self.preview = rendered ?? fallback
++                    self.rendering = false
+                 }
+             }
+         }
+--- original/scripts/build_unsigned_ipa.sh
++++ repaired/scripts/build_unsigned_ipa.sh
+@@ -1,34 +1,34 @@
+ #!/usr/bin/env bash
+-# 在 macOS 上打一个未签名 IPA（用于后续侧载签名）。
+-# 用法：./scripts/build_unsigned_ipa.sh
++# Run on a Mac with Xcode 26+. The resulting IPA still requires Apple signing.
+ set -euo pipefail
+-
+ cd "$(dirname "$0")/.."
+-
+-SCHEME="OutdoorPhotoAssistant"
+-CONFIG="Release"
+-DERIVED="build/DerivedData"
+-
+-rm -rf build
++if [[ "$(uname -s)" != Darwin ]] || ! command -v xcodebuild >/dev/null 2>&1; then
++  echo 'BUILD BLOCKED: macOS and full Xcode 26+ are required; Linux cannot build an iPhone app.' >&2
++  exit 2
++fi
++SDK_VERSION=$(xcrun --sdk iphoneos --show-sdk-version)
++if [[ "${SDK_VERSION%%.*}" -lt 26 ]]; then
++  echo "BUILD BLOCKED: iOS 26+ SDK required; selected SDK is $SDK_VERSION." >&2
++  exit 2
++fi
+ mkdir -p build
+-
+-xcodebuild \
+-  -project OutdoorPhotoAssistant.xcodeproj \
+-  -scheme "$SCHEME" \
+-  -configuration "$CONFIG" \
+-  -destination 'generic/platform=iOS' \
+-  -derivedDataPath "$DERIVED" \
+-  CODE_SIGNING_ALLOWED=NO \
+-  CODE_SIGNING_REQUIRED=NO \
+-  DEVELOPMENT_TEAM="" \
+-  build
+-
+-APP="$DERIVED/Build/Products/${CONFIG}-iphoneos/${SCHEME}.app"
++for CONFIG in Debug Release; do
++  xcodebuild \
++    -project OutdoorPhotoAssistant.xcodeproj \
++    -scheme OutdoorPhotoAssistant \
++    -configuration "$CONFIG" \
++    -destination 'generic/platform=iOS' \
++    -derivedDataPath "build/$CONFIG" \
++    CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO DEVELOPMENT_TEAM="" \
++    build 2>&1 | tee "build/build-$CONFIG.log"
++done
++APP='build/Release/Build/Products/Release-iphoneos/OutdoorPhotoAssistant.app'
+ test -d "$APP"
+-
+-mkdir -p build/Payload
+-cp -R "$APP" build/Payload/
+-cd build
+-/usr/bin/zip -qry "${SCHEME}-unsigned.ipa" Payload
+-ls -lh "${SCHEME}-unsigned.ipa"
+-echo "OK: $(pwd)/${SCHEME}-unsigned.ipa"
++STAGING=$(mktemp -d "$PWD/build/ipa.XXXXXX")
++trap 'rm -rf "$STAGING"' EXIT
++mkdir -p "$STAGING/Payload"
++cp -R "$APP" "$STAGING/Payload/"
++OUTPUT="$PWD/build/OutdoorPhotoAssistant-unsigned.ipa"
++rm -f "$OUTPUT"
++(cd "$STAGING" && /usr/bin/zip -qry "$OUTPUT" Payload)
++echo "BUILT (UNSIGNED): $OUTPUT"
+--- original/scripts/check_swift.py
++++ repaired/scripts/check_swift.py
+@@ -30,7 +30,7 @@
+             snippet = " / ".join(t.strip() for t in text[:2])[:180]
+             print(f"        line {node.start_point[0] + 1}: {node.type}: {snippet}")
+     else:
+-        print(f"OK    {path.relative_to(root)}  ({data.count(b'\\n') + 1} lines)")
++        print(f"OK    {path.relative_to(root)}  ({data.count(bytes([10])) + 1} lines)")
+ 
+ print(f"\nfiles={len(files)}  syntax_failures={bad}  total_lines={total_lines}")
+ sys.exit(1 if bad else 0)
+--- original/scripts/verify.py
++++ repaired/scripts/verify.py
+@@ -1,4 +1,6 @@
+ """Static verification for the generated Xcode project (runs on Windows, no Xcode).
++
++These checks do not type-check Swift or replace an Xcode build.
+ 
+ Checks:
+   1. project.pbxproj parses and its object graph is consistent
+@@ -161,8 +163,9 @@
+ check("jobs" in workflow, "workflow YAML parses")
+ check("build" in workflow["jobs"], "workflow has build job")
+ steps_text = yaml.dump(workflow)
+-check("CODE_SIGNING_ALLOWED=NO" in steps_text, "workflow builds unsigned")
+-check("configuration Debug" in steps_text and "configuration Release" in steps_text,
++check("CODE_SIGNING_ALLOWED=NO" in (ROOT / "scripts/build_unsigned_ipa.sh").read_text(), "workflow builds unsigned")
++build_script = (ROOT / "scripts/build_unsigned_ipa.sh").read_text()
++check("scripts/build_unsigned_ipa.sh" in steps_text and "for CONFIG in Debug Release" in build_script,
+       "workflow builds both Debug and Release")
+ 
+ print("== 8. Swift syntax + risky API scan ==")

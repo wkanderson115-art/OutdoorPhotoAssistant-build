@@ -1,0 +1,213 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B00000000000000000000001 /* OutdoorPhotoAssistantApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000001 /* OutdoorPhotoAssistantApp.swift */; };
+		B00000000000000000000002 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000002 /* RootView.swift */; };
+		B00000000000000000000003 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000003 /* AppTheme.swift */; };
+		B00000000000000000000004 /* OrientationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000004 /* OrientationPolicy.swift */; };
+		B00000000000000000000005 /* AdaptiveCameraEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000005 /* AdaptiveCameraEngine.swift */; };
+		B00000000000000000000006 /* CameraService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000006 /* CameraService.swift */; };
+		B00000000000000000000007 /* CaptureHandoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000007 /* CaptureHandoff.swift */; };
+		B00000000000000000000008 /* DepthPortraitProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000008 /* DepthPortraitProcessor.swift */; };
+		B00000000000000000000009 /* FrameAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000009 /* FrameAnalyzer.swift */; };
+		B00000000000000000000010 /* DirectorEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000010 /* DirectorEngine.swift */; };
+		B00000000000000000000011 /* DirectorVision.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000011 /* DirectorVision.swift */; };
+		B00000000000000000000012 /* DirectorMLModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000012 /* DirectorMLModel.swift */; };
+		B00000000000000000000013 /* PhotoFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000013 /* PhotoFilter.swift */; };
+		B00000000000000000000014 /* ColorGrade.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000014 /* ColorGrade.swift */; };
+		B00000000000000000000015 /* PortraitBeautyEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000015 /* PortraitBeautyEngine.swift */; };
+		B00000000000000000000016 /* SmartShutterEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000016 /* SmartShutterEngine.swift */; };
+		B00000000000000000000017 /* PhotoPostProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000017 /* PhotoPostProcessor.swift */; };
+		B00000000000000000000018 /* FrameScoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000018 /* FrameScoring.swift */; };
+		B00000000000000000000019 /* PhotoLibraryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000019 /* PhotoLibraryService.swift */; };
+		B00000000000000000000020 /* AppPhotoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000020 /* AppPhotoStore.swift */; };
+		B00000000000000000000021 /* CloudAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000021 /* CloudAPI.swift */; };
+		B00000000000000000000022 /* CloudConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000022 /* CloudConfiguration.swift */; };
+		B00000000000000000000023 /* CloudEscalationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000023 /* CloudEscalationPolicy.swift */; };
+		B00000000000000000000024 /* RetouchPlanMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000024 /* RetouchPlanMapper.swift */; };
+		B00000000000000000000025 /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000025 /* GalleryView.swift */; };
+		B00000000000000000000026 /* BlemishLearnedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000026 /* BlemishLearnedModel.swift */; };
+		B00000000000000000000027 /* BlemishModelBridge+Proxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000027 /* BlemishModelBridge+Proxy.swift */; };
+		B00000000000000000000028 /* BlemishModelBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000028 /* BlemishModelBridge.swift */; };
+		B00000000000000000000029 /* CommercialQuality.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000029 /* CommercialQuality.swift */; };
+		B00000000000000000000030 /* HybridFusion.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000030 /* HybridFusion.swift */; };
+		B00000000000000000000031 /* LocalRetouchPreflight.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000031 /* LocalRetouchPreflight.swift */; };
+		B00000000000000000000032 /* PresetCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000032 /* PresetCatalog.swift */; };
+		B00000000000000000000033 /* RetouchAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000033 /* RetouchAnalyzer.swift */; };
+		B00000000000000000000034 /* RetouchBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000034 /* RetouchBackground.swift */; };
+		B00000000000000000000035 /* RetouchBatchRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000035 /* RetouchBatchRunner.swift */; };
+		B00000000000000000000036 /* RetouchDelivery.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000036 /* RetouchDelivery.swift */; };
+		B00000000000000000000037 /* RetouchEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000037 /* RetouchEngine.swift */; };
+		B00000000000000000000038 /* RetouchMaskKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000038 /* RetouchMaskKit.swift */; };
+		B00000000000000000000039 /* RetouchParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000039 /* RetouchParameters.swift */; };
+		B00000000000000000000040 /* RetouchPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000040 /* RetouchPipeline.swift */; };
+		B00000000000000000000041 /* RetouchPixelAudit.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000041 /* RetouchPixelAudit.swift */; };
+		B00000000000000000000042 /* RetouchProofing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000042 /* RetouchProofing.swift */; };
+		B00000000000000000000043 /* RetouchQualityGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000043 /* RetouchQualityGate.swift */; };
+		B00000000000000000000044 /* RetouchRecovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000044 /* RetouchRecovery.swift */; };
+		B00000000000000000000045 /* RetouchReshape.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000045 /* RetouchReshape.swift */; };
+		B00000000000000000000046 /* RetouchSpecialist.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000046 /* RetouchSpecialist.swift */; };
+		B00000000000000000000047 /* RetouchStudioModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000047 /* RetouchStudioModel.swift */; };
+		B00000000000000000000048 /* SafeFusion.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000048 /* SafeFusion.swift */; };
+		B00000000000000000000049 /* CommercialRetouchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000049 /* CommercialRetouchView.swift */; };
+		B00000000000000000000050 /* RetouchStudioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000050 /* RetouchStudioView.swift */; };
+		B00000000000000000000051 /* CloudAPISettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000051 /* CloudAPISettingsView.swift */; };
+		B00000000000000000000052 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000052 /* LocationService.swift */; };
+		B00000000000000000000053 /* MotionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000053 /* MotionService.swift */; };
+		B00000000000000000000054 /* CaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000054 /* CaptureView.swift */; };
+		B00000000000000000000055 /* CaptureLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000055 /* CaptureLayout.swift */; };
+		B00000000000000000000056 /* CompositionOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000056 /* CompositionOverlay.swift */; };
+		B00000000000000000000057 /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000057 /* ReviewView.swift */; };
+		B00000000000000000000058 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000058 /* SettingsView.swift */; };
+		B00000000000000000000059 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000060 /* Assets.xcassets */; };
+		B00000000000000000000060 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000061 /* PrivacyInfo.xcprivacy */; };
+		B00000000000000000000062 /* LightroomLook.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000062 /* LightroomLook.swift */; };
+		B00000000000000000000063 /* LightroomPresetParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000063 /* LightroomPresetParser.swift */; };
+		B00000000000000000000064 /* LightroomPresetStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000064 /* LightroomPresetStore.swift */; };
+		B00000000000000000000065 /* ZipWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000065 /* ZipWriter.swift */; };
+		B00000000000000000000066 /* DiagnosticsExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000066 /* DiagnosticsExporter.swift */; };
+		B00000000000000000000067 /* AIEditAdvisor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000067 /* AIEditAdvisor.swift */; };
+		B00000000000000000000068 /* ScreenshotDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000068 /* ScreenshotDetector.swift */; };
+		B00000000000000000000069 /* ACRDevelopEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000069 /* ACRDevelopEngine.swift */; };
+		B0000000000000000000006A /* ACRDevelopBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000000000000000000006A /* ACRDevelopBridge.swift */; };
+		B0000000000000000000006B /* ACRLensRepairEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000000000000000000006B /* ACRLensRepairEngine.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A00000000000000000000005 /* OutdoorPhotoAssistant.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OutdoorPhotoAssistant.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F00000000000000000000001 /* OutdoorPhotoAssistantApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutdoorPhotoAssistantApp.swift; sourceTree = "<group>"; };
+		F00000000000000000000002 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		F00000000000000000000003 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		F00000000000000000000004 /* OrientationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationPolicy.swift; sourceTree = "<group>"; };
+		F00000000000000000000005 /* AdaptiveCameraEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveCameraEngine.swift; sourceTree = "<group>"; };
+		F00000000000000000000006 /* CameraService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraService.swift; sourceTree = "<group>"; };
+		F00000000000000000000007 /* CaptureHandoff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureHandoff.swift; sourceTree = "<group>"; };
+		F00000000000000000000008 /* DepthPortraitProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthPortraitProcessor.swift; sourceTree = "<group>"; };
+		F00000000000000000000009 /* FrameAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameAnalyzer.swift; sourceTree = "<group>"; };
+		F00000000000000000000010 /* DirectorEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectorEngine.swift; sourceTree = "<group>"; };
+		F00000000000000000000011 /* DirectorVision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectorVision.swift; sourceTree = "<group>"; };
+		F00000000000000000000012 /* DirectorMLModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectorMLModel.swift; sourceTree = "<group>"; };
+		F00000000000000000000013 /* PhotoFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoFilter.swift; sourceTree = "<group>"; };
+		F00000000000000000000014 /* ColorGrade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorGrade.swift; sourceTree = "<group>"; };
+		F00000000000000000000015 /* PortraitBeautyEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortraitBeautyEngine.swift; sourceTree = "<group>"; };
+		F00000000000000000000016 /* SmartShutterEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartShutterEngine.swift; sourceTree = "<group>"; };
+		F00000000000000000000017 /* PhotoPostProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPostProcessor.swift; sourceTree = "<group>"; };
+		F00000000000000000000018 /* FrameScoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameScoring.swift; sourceTree = "<group>"; };
+		F00000000000000000000019 /* PhotoLibraryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibraryService.swift; sourceTree = "<group>"; };
+		F00000000000000000000020 /* AppPhotoStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPhotoStore.swift; sourceTree = "<group>"; };
+		F00000000000000000000021 /* CloudAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudAPI.swift; sourceTree = "<group>"; };
+		F00000000000000000000022 /* CloudConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudConfiguration.swift; sourceTree = "<group>"; };
+		F00000000000000000000023 /* CloudEscalationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudEscalationPolicy.swift; sourceTree = "<group>"; };
+		F00000000000000000000024 /* RetouchPlanMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetouchPlanMapper.swift; sourceTree = "<group>"; };
+		F00000000000000000000025 /* GalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryView.swift; sourceTree = "<group>"; };
+		F00000000000000000000026 /* BlemishLearnedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlemishLearnedModel.swift; sourceTree = "<group>"; };
+		F00000000000000000000027 /* BlemishModelBridge+Proxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlemishModelBridge+Proxy.swift; sourceTree = "<group>"; };
+		F00000000000000000000028 /* BlemishModelBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlemishModelBridge.swift; sourceTree = "<group>"; };
+		F00000000000000000000029 /* CommercialQuality.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommercialQuality.swift; sourceTree = "<group>"; };
+		F00000000000000000000030 /* HybridFusion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HybridFusion.swift; sourceTree = "<group>"; };
+		F00000000000000000000031 /* LocalRetouchPreflight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalRetouchPreflight.swift; sourceTree = "<group>"; };
+		F00000000000000000000032 /* PresetCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetCatalog.swift; sourceTree = "<group>"; };
+		F00000000000000000000033 /* RetouchAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetouchAnalyzer.swift; sourceTree = "<group>"; };
+		F00000000000000000000034 /* RetouchBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetouchBackground.swift; sourceTree = "<group>"; };
+		F00000000000000000000035 /* RetouchBatchRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetouchBatchRunner.swift; sourceTree = "<group>"; };
+		F00000000000000000000036 /* RetouchDelivery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetouchDelivery.swift; sourceTree = "<group>"; };
+		F00000000000000000000037 /* RetouchEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetouchEngine.swift; sourceTree = "<group>"; };
+		F00000000000000000000038 /* RetouchMaskKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetouchMaskKit.swift; sourceTree = "<group>"; };
+		F00000000000000000000039 /* RetouchParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetouchParameters.swift; sourceTree = "<group>"; };
+		F00000000000000000000040 /* RetouchPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetouchPipeline.swift; sourceTree = "<group>"; };
+		F00000000000000000000041 /* RetouchPixelAudit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetouchPixelAudit.swift; sourceTree = "<group>"; };
+		F00000000000000000000042 /* RetouchProofing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetouchProofing.swift; sourceTree = "<group>"; };
+		F00000000000000000000043 /* RetouchQualityGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetouchQualityGate.swift; sourceTree = "<group>"; };
+		F00000000000000000000044 /* RetouchRecovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetouchRecovery.swift; sourceTree = "<group>"; };
+		F00000000000000000000045 /* RetouchReshape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetouchReshape.swift; sourceTree = "<group>"; };
+		F00000000000000000000046 /* RetouchSpecialist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetouchSpecialist.swift; sourceTree = "<group>"; };
+		F00000000000000000000047 /* RetouchStudioModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetouchStudioModel.swift; sourceTree = "<group>"; };
+		F00000000000000000000048 /* SafeFusion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeFusion.swift; sourceTree = "<group>"; };
+		F00000000000000000000049 /* CommercialRetouchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommercialRetouchView.swift; sourceTree = "<group>"; };
+		F00000000000000000000050 /* RetouchStudioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetouchStudioView.swift; sourceTree = "<group>"; };
+		F00000000000000000000051 /* CloudAPISettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudAPISettingsView.swift; sourceTree = "<group>"; };
+		F00000000000000000000052 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		F00000000000000000000053 /* MotionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionService.swift; sourceTree = "<group>"; };
+		F00000000000000000000054 /* CaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureView.swift; sourceTree = "<group>"; };
+		F00000000000000000000055 /* CaptureLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureLayout.swift; sourceTree = "<group>"; };
+		F00000000000000000000056 /* CompositionOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositionOverlay.swift; sourceTree = "<group>"; };
+		F00000000000000000000057 /* ReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewView.swift; sourceTree = "<group>"; };
+		F00000000000000000000058 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		F00000000000000000000059 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F00000000000000000000060 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F00000000000000000000061 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		F00000000000000000000062 /* LightroomLook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightroomLook.swift; sourceTree = "<group>"; };
+		F00000000000000000000063 /* LightroomPresetParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightroomPresetParser.swift; sourceTree = "<group>"; };
+		F00000000000000000000064 /* LightroomPresetStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightroomPresetStore.swift; sourceTree = "<group>"; };
+		F00000000000000000000065 /* ZipWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipWriter.swift; sourceTree = "<group>"; };
+		F00000000000000000000066 /* DiagnosticsExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticsExporter.swift; sourceTree = "<group>"; };
+		F00000000000000000000067 /* AIEditAdvisor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIEditAdvisor.swift; sourceTree = "<group>"; };
+		F00000000000000000000068 /* ScreenshotDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotDetector.swift; sourceTree = "<group>"; };
+		F00000000000000000000069 /* ACRDevelopEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRDevelopEngine.swift; sourceTree = "<group>"; };
+		F0000000000000000000006A /* ACRDevelopBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRDevelopBridge.swift; sourceTree = "<group>"; };
+		F0000000000000000000006B /* ACRLensRepairEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRLensRepairEngine.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A00000000000000000000008 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A00000000000000000000002 = {isa = PBXGroup; children = (A00000000000000000000006 /* OutdoorPhotoAssistant */, A00000000000000000000003 /* Products */, ); sourceTree = "<group>"; };
+		A00000000000000000000003 /* Products */ = {isa = PBXGroup; children = (A00000000000000000000005 /* OutdoorPhotoAssistant.app */, ); name = Products; sourceTree = "<group>"; };
+		A00000000000000000000006 /* OutdoorPhotoAssistant */ = {isa = PBXGroup; children = (D00000000000000000000001 /* App */, D00000000000000000000015 /* Core */, D00000000000000000000016 /* Features */, F00000000000000000000059 /* Info.plist */, F00000000000000000000060 /* Assets.xcassets */, F00000000000000000000061 /* PrivacyInfo.xcprivacy */, ); path = OutdoorPhotoAssistant; sourceTree = "<group>"; };
+		D00000000000000000000015 /* Core */ = {isa = PBXGroup; children = (D00000000000000000000002 /* Camera */, D00000000000000000000003 /* Analysis */, D00000000000000000000004 /* Storage */, D00000000000000000000005 /* Cloud */, D00000000000000000000010 /* Location */, D00000000000000000000011 /* Motion */, D00000000000000000000007 /* CommercialRetouch */, ); path = Core; sourceTree = "<group>"; };
+		D00000000000000000000016 /* Features */ = {isa = PBXGroup; children = (D00000000000000000000012 /* Capture */, D00000000000000000000013 /* Review */, D00000000000000000000014 /* Settings */, D00000000000000000000006 /* Gallery */, D00000000000000000000009 /* Cloud */, D00000000000000000000008 /* CommercialRetouch */, ); path = Features; sourceTree = "<group>"; };
+		D00000000000000000000001 /* App */ = {isa = PBXGroup; children = (F00000000000000000000001 /* OutdoorPhotoAssistantApp.swift */, F00000000000000000000002 /* RootView.swift */, F00000000000000000000003 /* AppTheme.swift */, F00000000000000000000004 /* OrientationPolicy.swift */, ); path = App; sourceTree = "<group>"; };
+		D00000000000000000000002 /* Camera */ = {isa = PBXGroup; children = (F00000000000000000000005 /* AdaptiveCameraEngine.swift */, F00000000000000000000006 /* CameraService.swift */, F00000000000000000000007 /* CaptureHandoff.swift */, F00000000000000000000008 /* DepthPortraitProcessor.swift */, ); path = Camera; sourceTree = "<group>"; };
+		D00000000000000000000003 /* Analysis */ = {isa = PBXGroup; children = (F00000000000000000000009 /* FrameAnalyzer.swift */, F00000000000000000000010 /* DirectorEngine.swift */, F00000000000000000000011 /* DirectorVision.swift */, F00000000000000000000012 /* DirectorMLModel.swift */, F00000000000000000000013 /* PhotoFilter.swift */, F00000000000000000000014 /* ColorGrade.swift */, F00000000000000000000015 /* PortraitBeautyEngine.swift */, F00000000000000000000016 /* SmartShutterEngine.swift */, F00000000000000000000017 /* PhotoPostProcessor.swift */, F00000000000000000000018 /* FrameScoring.swift */, ); path = Analysis; sourceTree = "<group>"; };
+		D00000000000000000000004 /* Storage */ = {isa = PBXGroup; children = (F00000000000000000000019 /* PhotoLibraryService.swift */, F00000000000000000000020 /* AppPhotoStore.swift */, F00000000000000000000065 /* ZipWriter.swift */, F00000000000000000000066 /* DiagnosticsExporter.swift */, ); path = Storage; sourceTree = "<group>"; };
+		D00000000000000000000005 /* Cloud */ = {isa = PBXGroup; children = (F00000000000000000000021 /* CloudAPI.swift */, F00000000000000000000022 /* CloudConfiguration.swift */, F00000000000000000000023 /* CloudEscalationPolicy.swift */, F00000000000000000000024 /* RetouchPlanMapper.swift */, ); path = Cloud; sourceTree = "<group>"; };
+		D00000000000000000000006 /* Gallery */ = {isa = PBXGroup; children = (F00000000000000000000025 /* GalleryView.swift */, ); path = Gallery; sourceTree = "<group>"; };
+		D00000000000000000000007 /* CommercialRetouch */ = {isa = PBXGroup; children = (F00000000000000000000026 /* BlemishLearnedModel.swift */, F00000000000000000000027 /* BlemishModelBridge+Proxy.swift */, F00000000000000000000028 /* BlemishModelBridge.swift */, F00000000000000000000029 /* CommercialQuality.swift */, F00000000000000000000030 /* HybridFusion.swift */, F00000000000000000000031 /* LocalRetouchPreflight.swift */, F00000000000000000000032 /* PresetCatalog.swift */, F00000000000000000000033 /* RetouchAnalyzer.swift */, F00000000000000000000034 /* RetouchBackground.swift */, F00000000000000000000035 /* RetouchBatchRunner.swift */, F00000000000000000000036 /* RetouchDelivery.swift */, F00000000000000000000037 /* RetouchEngine.swift */, F00000000000000000000038 /* RetouchMaskKit.swift */, F00000000000000000000039 /* RetouchParameters.swift */, F00000000000000000000040 /* RetouchPipeline.swift */, F00000000000000000000041 /* RetouchPixelAudit.swift */, F00000000000000000000042 /* RetouchProofing.swift */, F00000000000000000000043 /* RetouchQualityGate.swift */, F00000000000000000000044 /* RetouchRecovery.swift */, F00000000000000000000045 /* RetouchReshape.swift */, F00000000000000000000046 /* RetouchSpecialist.swift */, F00000000000000000000047 /* RetouchStudioModel.swift */, F00000000000000000000048 /* SafeFusion.swift */, F00000000000000000000062 /* LightroomLook.swift */, F00000000000000000000063 /* LightroomPresetParser.swift */, F00000000000000000000064 /* LightroomPresetStore.swift */, F00000000000000000000067 /* AIEditAdvisor.swift */, F00000000000000000000068 /* ScreenshotDetector.swift */, F00000000000000000000069 /* ACRDevelopEngine.swift */, F0000000000000000000006A /* ACRDevelopBridge.swift */, F0000000000000000000006B /* ACRLensRepairEngine.swift */, ); path = CommercialRetouch; sourceTree = "<group>"; };
+		D00000000000000000000008 /* CommercialRetouch */ = {isa = PBXGroup; children = (F00000000000000000000049 /* CommercialRetouchView.swift */, F00000000000000000000050 /* RetouchStudioView.swift */, ); path = CommercialRetouch; sourceTree = "<group>"; };
+		D00000000000000000000009 /* Cloud */ = {isa = PBXGroup; children = (F00000000000000000000051 /* CloudAPISettingsView.swift */, ); path = Cloud; sourceTree = "<group>"; };
+		D00000000000000000000010 /* Location */ = {isa = PBXGroup; children = (F00000000000000000000052 /* LocationService.swift */, ); path = Location; sourceTree = "<group>"; };
+		D00000000000000000000011 /* Motion */ = {isa = PBXGroup; children = (F00000000000000000000053 /* MotionService.swift */, ); path = Motion; sourceTree = "<group>"; };
+		D00000000000000000000012 /* Capture */ = {isa = PBXGroup; children = (F00000000000000000000054 /* CaptureView.swift */, F00000000000000000000055 /* CaptureLayout.swift */, F00000000000000000000056 /* CompositionOverlay.swift */, ); path = Capture; sourceTree = "<group>"; };
+		D00000000000000000000013 /* Review */ = {isa = PBXGroup; children = (F00000000000000000000057 /* ReviewView.swift */, ); path = Review; sourceTree = "<group>"; };
+		D00000000000000000000014 /* Settings */ = {isa = PBXGroup; children = (F00000000000000000000058 /* SettingsView.swift */, ); path = Settings; sourceTree = "<group>"; };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A00000000000000000000004 /* OutdoorPhotoAssistant */ = {isa = PBXNativeTarget; buildConfigurationList = A00000000000000000000011; buildPhases = (A00000000000000000000007 /* Sources */, A00000000000000000000008 /* Frameworks */, A00000000000000000000009 /* Resources */, ); buildRules = (); dependencies = (); name = OutdoorPhotoAssistant; productName = OutdoorPhotoAssistant; productReference = A00000000000000000000005 /* OutdoorPhotoAssistant.app */; productType = "com.apple.product-type.application"; };
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A00000000000000000000001 /* Project object */ = {isa = PBXProject; attributes = { BuildIndependentTargetsInParallel = 1; LastSwiftUpdateCheck = 2600; LastUpgradeCheck = 2600; TargetAttributes = { A00000000000000000000004 = { CreatedOnToolsVersion = 26.0; }; }; }; buildConfigurationList = A00000000000000000000010; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, Base, "zh-Hans", ); mainGroup = A00000000000000000000002; productRefGroup = A00000000000000000000003 /* Products */; projectDirPath = ""; projectRoot = ""; targets = (A00000000000000000000004 /* OutdoorPhotoAssistant */, ); };
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A00000000000000000000009 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B00000000000000000000059 /* Assets.xcassets in Resources */, B00000000000000000000060 /* PrivacyInfo.xcprivacy in Resources */, ); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A00000000000000000000007 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B00000000000000000000001 /* OutdoorPhotoAssistantApp.swift in Sources */, B00000000000000000000002 /* RootView.swift in Sources */, B00000000000000000000003 /* AppTheme.swift in Sources */, B00000000000000000000004 /* OrientationPolicy.swift in Sources */, B00000000000000000000005 /* AdaptiveCameraEngine.swift in Sources */, B00000000000000000000006 /* CameraService.swift in Sources */, B00000000000000000000007 /* CaptureHandoff.swift in Sources */, B00000000000000000000008 /* DepthPortraitProcessor.swift in Sources */, B00000000000000000000009 /* FrameAnalyzer.swift in Sources */, B00000000000000000000010 /* DirectorEngine.swift in Sources */, B00000000000000000000011 /* DirectorVision.swift in Sources */, B00000000000000000000012 /* DirectorMLModel.swift in Sources */, B00000000000000000000013 /* PhotoFilter.swift in Sources */, B00000000000000000000014 /* ColorGrade.swift in Sources */, B00000000000000000000015 /* PortraitBeautyEngine.swift in Sources */, B00000000000000000000016 /* SmartShutterEngine.swift in Sources */, B00000000000000000000017 /* PhotoPostProcessor.swift in Sources */, B00000000000000000000018 /* FrameScoring.swift in Sources */, B00000000000000000000019 /* PhotoLibraryService.swift in Sources */, B00000000000000000000020 /* AppPhotoStore.swift in Sources */, B00000000000000000000021 /* CloudAPI.swift in Sources */, B00000000000000000000022 /* CloudConfiguration.swift in Sources */, B00000000000000000000023 /* CloudEscalationPolicy.swift in Sources */, B00000000000000000000024 /* RetouchPlanMapper.swift in Sources */, B00000000000000000000025 /* GalleryView.swift in Sources */, B00000000000000000000026 /* BlemishLearnedModel.swift in Sources */, B00000000000000000000027 /* BlemishModelBridge+Proxy.swift in Sources */, B00000000000000000000028 /* BlemishModelBridge.swift in Sources */, B00000000000000000000029 /* CommercialQuality.swift in Sources */, B00000000000000000000030 /* HybridFusion.swift in Sources */, B00000000000000000000031 /* LocalRetouchPreflight.swift in Sources */, B00000000000000000000032 /* PresetCatalog.swift in Sources */, B00000000000000000000033 /* RetouchAnalyzer.swift in Sources */, B00000000000000000000034 /* RetouchBackground.swift in Sources */, B00000000000000000000035 /* RetouchBatchRunner.swift in Sources */, B00000000000000000000036 /* RetouchDelivery.swift in Sources */, B00000000000000000000037 /* RetouchEngine.swift in Sources */, B00000000000000000000038 /* RetouchMaskKit.swift in Sources */, B00000000000000000000039 /* RetouchParameters.swift in Sources */, B00000000000000000000040 /* RetouchPipeline.swift in Sources */, B00000000000000000000041 /* RetouchPixelAudit.swift in Sources */, B00000000000000000000042 /* RetouchProofing.swift in Sources */, B00000000000000000000043 /* RetouchQualityGate.swift in Sources */, B00000000000000000000044 /* RetouchRecovery.swift in Sources */, B00000000000000000000045 /* RetouchReshape.swift in Sources */, B00000000000000000000046 /* RetouchSpecialist.swift in Sources */, B00000000000000000000047 /* RetouchStudioModel.swift in Sources */, B00000000000000000000048 /* SafeFusion.swift in Sources */, B00000000000000000000049 /* CommercialRetouchView.swift in Sources */, B00000000000000000000050 /* RetouchStudioView.swift in Sources */, B00000000000000000000051 /* CloudAPISettingsView.swift in Sources */, B00000000000000000000052 /* LocationService.swift in Sources */, B00000000000000000000053 /* MotionService.swift in Sources */, B00000000000000000000054 /* CaptureView.swift in Sources */, B00000000000000000000055 /* CaptureLayout.swift in Sources */, B00000000000000000000056 /* CompositionOverlay.swift in Sources */, B00000000000000000000057 /* ReviewView.swift in Sources */, B00000000000000000000058 /* SettingsView.swift in Sources */, B00000000000000000000062 /* LightroomLook.swift in Sources */, B00000000000000000000063 /* LightroomPresetParser.swift in Sources */, B00000000000000000000064 /* LightroomPresetStore.swift in Sources */, B00000000000000000000065 /* ZipWriter.swift in Sources */, B00000000000000000000066 /* DiagnosticsExporter.swift in Sources */, B00000000000000000000067 /* AIEditAdvisor.swift in Sources */, B00000000000000000000068 /* ScreenshotDetector.swift in Sources */, B00000000000000000000069 /* ACRDevelopEngine.swift in Sources */, B0000000000000000000006A /* ACRDevelopBridge.swift in Sources */, B0000000000000000000006B /* ACRLensRepairEngine.swift in Sources */, ); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A00000000000000000000012 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ANALYZER_NONNULL = YES; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; CLANG_WARN_BOOL_CONVERSION = YES; CLANG_WARN_EMPTY_BODY = YES; CLANG_WARN_UNREACHABLE_CODE = YES; COPY_PHASE_STRIP = NO; ENABLE_STRICT_OBJC_MSGSEND = YES; GCC_C_LANGUAGE_STANDARD = gnu17; GCC_NO_COMMON_BLOCKS = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.6; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; DEBUG_INFORMATION_FORMAT = dwarf; ENABLE_TESTABILITY = YES; GCC_DYNAMIC_NO_PIC = NO; GCC_OPTIMIZATION_LEVEL = 0; GCC_PREPROCESSOR_DEFINITIONS = ("DEBUG=1", "$(inherited)", ); MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE; ONLY_ACTIVE_ARCH = YES; SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; }; name = Debug; };
+		A00000000000000000000013 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ANALYZER_NONNULL = YES; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; CLANG_WARN_BOOL_CONVERSION = YES; CLANG_WARN_EMPTY_BODY = YES; CLANG_WARN_UNREACHABLE_CODE = YES; COPY_PHASE_STRIP = NO; ENABLE_STRICT_OBJC_MSGSEND = YES; GCC_C_LANGUAGE_STANDARD = gnu17; GCC_NO_COMMON_BLOCKS = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.6; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym"; ENABLE_NS_ASSERTIONS = NO; SWIFT_COMPILATION_MODE = wholemodule; SWIFT_OPTIMIZATION_LEVEL = "-O"; VALIDATE_PRODUCT = YES; }; name = Release; };
+		A00000000000000000000014 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 34; DEVELOPMENT_TEAM = ""; ENABLE_PREVIEWS = YES; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = OutdoorPhotoAssistant/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 17.6; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", ); MARKETING_VERSION = 1.8; PRODUCT_BUNDLE_IDENTIFIER = com.example.outdoorphotoassistant; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Debug; };
+		A00000000000000000000015 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 34; DEVELOPMENT_TEAM = ""; ENABLE_PREVIEWS = YES; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = OutdoorPhotoAssistant/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 17.6; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", ); MARKETING_VERSION = 1.8; PRODUCT_BUNDLE_IDENTIFIER = com.example.outdoorphotoassistant; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A00000000000000000000010 = {isa = XCConfigurationList; buildConfigurations = (A00000000000000000000012 /* Debug */, A00000000000000000000013 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A00000000000000000000011 = {isa = XCConfigurationList; buildConfigurations = (A00000000000000000000014 /* Debug */, A00000000000000000000015 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+
+	};
+	rootObject = A00000000000000000000001 /* Project object */;
+}

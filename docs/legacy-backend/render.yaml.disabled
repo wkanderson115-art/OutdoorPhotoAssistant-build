@@ -1,0 +1,31 @@
+# Place this file at the GitHub repository root, alongside server/.
+# This creates paid resources. Review the Render quote before confirming.
+services:
+  - type: web
+    name: outdoor-photo-api
+    runtime: python
+    plan: 1c-2g
+    rootDir: server
+    buildCommand: pip install -r requirements.txt
+    startCommand: python launch.py
+    healthCheckPath: /health
+    numInstances: 1
+    disk:
+      name: photo-data
+      mountPath: /var/data
+      sizeGB: 5
+    envVars:
+      - key: DATABASE_PATH
+        value: /var/data/jobs.sqlite3
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      - key: SEEDREAM_API_KEY
+        sync: false
+      - key: APPLE_CLIENT_ID
+        sync: false
+      - key: ALLOWED_APPLE_SUBS
+        sync: false
+      - key: USER_DAILY_LIMIT
+        value: '10'
+      - key: GLOBAL_DAILY_LIMIT
+        value: '200'

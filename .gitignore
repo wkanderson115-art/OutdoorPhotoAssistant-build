@@ -1,0 +1,25 @@
+# macOS / Xcode
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.ipa
+*.dSYM
+build-*.log
+
+# Python tooling
+__pycache__/
+*.pyc
+
+# System
+.DS_Store
+Thumbs.db
+
+# Server secrets / durable state
+server/.env
+*.sqlite3*
+*.worker.lock
+.venv/
+
+# Personal model credentials
+**/.env

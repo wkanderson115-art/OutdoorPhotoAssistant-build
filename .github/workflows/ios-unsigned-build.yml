@@ -1,0 +1,152 @@
+name: iOS Build (unsigned IPA)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, work, figma-final-landscape4x3]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select newest installed Xcode
+        run: |
+          set -euo pipefail
+          XCODE=$(find /Applications -maxdepth 1 -name 'Xcode*.app' | sort -V | tail -n 1)
+          test -n "$XCODE"
+          sudo xcode-select --switch "$XCODE/Contents/Developer"
+          xcodebuild -version
+          xcodebuild -showsdks
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install verification dependencies
+        run: python -m pip install -r scripts/requirements-check.txt
+      - name: Verify project and Swift syntax
+        run: |
+          python scripts/verify.py
+          python scripts/verify_direct_access.py
+      - name: Run shutter decision tests
+        run: |
+          mkdir -p build
+          xcrun swiftc OutdoorPhotoAssistant/Core/Analysis/SmartShutterEngine.swift tests/main.swift -o build/shutter-tests
+          build/shutter-tests
+      - name: Run director decision and preference tests
+        run: |
+          mkdir -p build
+          xcrun swiftc OutdoorPhotoAssistant/Core/Analysis/DirectorEngine.swift tests/director/main.swift -o build/director-tests
+          build/director-tests
+      - name: Run capture layout tests
+        run: |
+          mkdir -p build
+          xcrun swiftc OutdoorPhotoAssistant/Features/Capture/CaptureLayout.swift tests/layout/main.swift -o build/layout-tests
+          build/layout-tests
+      - name: Run analysis scoring tests
+        # Pure-logic scoring helpers split out of FrameAnalyzer; no UIKit/Vision,
+        # so this is the first runtime test that actually exercises the heuristics.
+        run: |
+          mkdir -p build
+          xcrun swiftc OutdoorPhotoAssistant/Core/Analysis/FrameScoring.swift OutdoorPhotoAssistant/Core/Analysis/DirectorEngine.swift tests/analysis/main.swift -o build/analysis-tests
+          build/analysis-tests
+      - name: Type-check the analysis layer
+        # Syntax-only checks cannot see undefined symbols; build 27 shipped one.
+        # This compiles the whole analysis layer (minus the app target) on the iOS SDK.
+        run: |
+          set -euo pipefail
+          xcrun --sdk iphoneos swiftc -typecheck -target arm64-apple-ios17.6 \
+            OutdoorPhotoAssistant/Core/Analysis/FrameAnalyzer.swift \
+            OutdoorPhotoAssistant/Core/Analysis/DirectorEngine.swift \
+            OutdoorPhotoAssistant/Core/Analysis/DirectorVision.swift \
+            OutdoorPhotoAssistant/Core/Analysis/DirectorMLModel.swift \
+            OutdoorPhotoAssistant/Core/Analysis/PhotoFilter.swift \
+            OutdoorPhotoAssistant/Core/Analysis/ColorGrade.swift \
+            OutdoorPhotoAssistant/Core/Analysis/PhotoPostProcessor.swift \
+            OutdoorPhotoAssistant/Core/Analysis/PortraitBeautyEngine.swift \
+            OutdoorPhotoAssistant/Core/Analysis/SmartShutterEngine.swift \
+            OutdoorPhotoAssistant/Core/Analysis/FrameScoring.swift
+      - name: Run cloud API contract tests with mock transport
+        run: |
+          xcrun swiftc -parse-as-library OutdoorPhotoAssistant/Core/Cloud/CloudAPI.swift OutdoorPhotoAssistant/Core/Cloud/CloudConfiguration.swift tests/cloud/main.swift -o build/cloud-tests
+          build/cloud-tests
+      - name: Type-check the retouch, studio and delivery layer
+        # This is the compile gate for the V16/V17 engine: without it a type error
+        # in the retouch stack only shows up as a failed app build much later.
+        run: |
+          set -euo pipefail
+          xcrun --sdk iphoneos swiftc -typecheck -target arm64-apple-ios17.6 \
+            OutdoorPhotoAssistant/Core/CommercialRetouch/*.swift \
+            OutdoorPhotoAssistant/Core/Cloud/*.swift
+      - name: Type-check the retouch unit-test harnesses
+        run: |
+          set -euo pipefail
+          R="$PWD/OutdoorPhotoAssistant/Core/CommercialRetouch"
+          xcrun --sdk iphonesimulator swiftc -typecheck -target arm64-apple-ios17.6-simulator \
+            "$R/RetouchMaskKit.swift" tests/retouchkit/main.swift
+          xcrun --sdk iphonesimulator swiftc -typecheck -target arm64-apple-ios17.6-simulator \
+            "$R/RetouchParameters.swift" "$R/PresetCatalog.swift" "$R/RetouchMaskKit.swift" "$R/AIEditAdvisor.swift" "$R/RetouchStudioModel.swift" tests/batch/main.swift
+          xcrun --sdk iphonesimulator swiftc -typecheck -target arm64-apple-ios17.6-simulator \
+            "$R/RetouchParameters.swift" "$R/PresetCatalog.swift" "$R/RetouchMaskKit.swift" "$R/AIEditAdvisor.swift" "$R/RetouchStudioModel.swift" "$R/RetouchReshape.swift" tests/reshape/main.swift
+          xcrun --sdk iphonesimulator swiftc -typecheck -target arm64-apple-ios17.6-simulator \
+            "$R/RetouchParameters.swift" "$R/PresetCatalog.swift" "$R/RetouchMaskKit.swift" "$R/AIEditAdvisor.swift" "$R/RetouchStudioModel.swift" "$R/RetouchBackground.swift" tests/background/main.swift
+          xcrun --sdk iphonesimulator swiftc -typecheck -target arm64-apple-ios17.6-simulator \
+            "$R/RetouchParameters.swift" "$R/PresetCatalog.swift" "$R/AIEditAdvisor.swift" tests/advisor/main.swift
+          xcrun swiftc -typecheck "$R/RetouchDelivery.swift" "$R/RetouchProofing.swift" tests/delivery/main.swift
+      - name: Static check of the retouch sources
+        run: python scripts/check_retouch_sources.py
+      - name: Build Debug and Release and package unsigned IPA
+        run: bash scripts/build_unsigned_ipa.sh
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: OutdoorPhotoAssistant-unsigned-ipa
+          path: build/OutdoorPhotoAssistant-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 30
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: build/*.log
+          if-no-files-found: ignore
+
+  # ---------------------------------------------------------------------------
+  # 类型检查闸门（独立流水线）。
+  #
+  # 为什么是独立 job 而不是 build job 里的一步：
+  #   - 类型检查要的是「快速失败」的反馈，构建要的是「出未签名 IPA」的产物；
+  #     两者失败原因不同，分成两个 job 后 CI 页面上一眼能看出是哪一类挂了。
+  #   - 故意不加 needs，也不给上面的 build job 加 needs: typecheck：
+  #     类型检查红的时候构建照样要跑完出产物，构建不会被类型检查阻塞。
+  #
+  # 可选做法（如果以后想串行 / 复用，二选一，均不需要改上面的 build job）：
+  #   1) 让本 job 等构建：在本 job 的 runs-on 上一行加 `needs: build`；
+  #   2) 把本 job 的 runner 换成 self-hosted 预热机，只保留最后一步
+  #      `bash scripts/typecheck.sh`，其余步骤照抄 build job。
+  # ---------------------------------------------------------------------------
+  typecheck:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select newest installed Xcode
+        run: |
+          set -euo pipefail
+          XCODE=$(find /Applications -maxdepth 1 -name 'Xcode*.app' | sort -V | tail -n 1)
+          test -n "$XCODE"
+          sudo xcode-select --switch "$XCODE/Contents/Developer"
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-path
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install verification dependencies
+        run: python -m pip install -r scripts/requirements-check.txt
+      - name: Type-check app sources and run test harnesses
+        run: bash scripts/typecheck.sh

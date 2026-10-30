@@ -1,0 +1,76 @@
+Source: https://github.com/NextLevel/NextLevel/blob/main/Sources/NextLevel.swift
+Blob SHA: fbf90185f15c26709d76e6c53816b68fd622b86e
+
+    ///
+    /// - Parameter targetBias: The exposure target bias.
+	/// - Parameter force: Change even if adjust is already in progress.
+	/// - Parameter completionHandler: Called at completion.
+    public func expose(withTargetBias targetBias: Float, force: Bool = false, completionHandler: ((CMTime) -> Void)? = nil) {
+        guard let device = self._currentDevice,
+            !device.isAdjustingExposure || force
+            else {
+                return
+        }
+
+        let newTargetBias = targetBias.clamped(to: device.minExposureTargetBias...device.maxExposureTargetBias)
+
+        do {
+            try device.lockForConfiguration()
+
+            device.setExposureTargetBias(newTargetBias, completionHandler: completionHandler)
+
+            device.unlockForConfiguration()
+        } catch {
+            print("NextLevel, setExposureTargetBias failed to lock device for configuration")
+        }
+    }
+
+    // white balance
+
+    /// Checks if white balance lock is supported.
+    public var isWhiteBalanceLockSupported: Bool {
+        get {
+
+
+    /// Updates video capture zoom factor.
+    public var videoZoomFactor: Float {
+        get {
+            if let device = self._currentDevice {
+                return Float(device.videoZoomFactor)
+            }
+            return 1.0 // prefer 1.0 instead of using an optional
+        }
+        set {
+            self.executeClosureAsyncOnSessionQueueIfNecessary {
+                if let device = self._currentDevice {
+                    do {
+                        try device.lockForConfiguration()
+
+                        device.videoZoomFactor = max(device.minAvailableVideoZoomFactor, min(CGFloat(newValue), device.activeFormat.videoMaxZoomFactor))
+
+                        device.unlockForConfiguration()
+                    } catch {
+                        print("NextLevel, zoomFactor failed to lock device for configuration")
+                    }
+                }
+            }
+        }
+    }
+
+
+        self._observers.append(currentDevice.observe(\.videoZoomFactor, options: [.new]) { [weak self] _, _ in
+            guard let strongSelf = self else {
+                return
+            }
+
+            DispatchQueue.main.async {
+                strongSelf.videoDelegate?.nextLevel(strongSelf, didUpdateVideoZoomFactor: strongSelf.videoZoomFactor)
+            }
+        })
+    }
+
+    internal func removeCaptureDeviceObservers(_ currentDevice: AVCaptureDevice) {
+        for observer in self._observers {
+            observer.invalidate()
+        }
+        self._observers.removeAll()

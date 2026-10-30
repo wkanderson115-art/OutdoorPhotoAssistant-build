@@ -1,0 +1,2 @@
+移除5.0 Pro不支持的sequential_image_generation参数（包括disabled）。400显示参数/图片校验提示，按平台code/param分类；只显示经过字符白名单及凭证排除的错误代码和响应请求ID，不显示原始错误正文。保持单次请求，不自动重试。官方依据：https://docs.volcengine.com/docs/ark/image-generation-api?lang=en 。未提供Key，尚未实调；没有Xcode，尚未编译执行Swift测试。
+已核对上传：POST /api/v3/images/generations；Bearer Key仅随生成请求；model= doubao-seedream-5-0-pro-260628；image=data:image/jpeg;base64,...；size=2K；output_format=jpeg；response_format=url；watermark=true。不传组图、stream、n参数。下载：解析data中首个非空url，GET该HTTPS地址，Accept图片，不带Key，120秒超时。官方URL有效24小时，先存结果链接再下载，重试下载不重新生成。App上传副本3072长边/JPEG0.9/15MiB为本地策略，非声称官方完整上限。

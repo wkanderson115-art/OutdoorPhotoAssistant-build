@@ -1,0 +1,4 @@
+OK    director/main.swift  (90 lines)
+OK    main.swift  (22 lines)
+
+files=2  syntax_failures=0  total_lines=110

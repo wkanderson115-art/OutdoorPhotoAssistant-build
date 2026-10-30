@@ -1,0 +1,5 @@
+OK    cloud/main.swift  (81 lines)
+OK    director/main.swift  (90 lines)
+OK    main.swift  (22 lines)
+
+files=3  syntax_failures=0  total_lines=190

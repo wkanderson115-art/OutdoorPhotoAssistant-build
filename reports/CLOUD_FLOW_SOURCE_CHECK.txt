@@ -1,0 +1,12 @@
+PASS: capture path has no cloud model calls
+PASS: capture and review save versions under the same photo ID
+PASS: app gallery no longer reads all system photos
+PASS: keys use per-device Keychain storage
+PASS: DeepSeek request includes image data and an output token limit
+PASS: manual tasks offer cache reuse and an explicit force path
+PASS: generated links persist for download-only recovery
+PASS: Seedream link is persisted before download
+PASS: metadata commits are revisioned and atomic
+PASS: Xcode project is portable
+PASS: workflow includes mocked cloud contract tests
+NOTE: these are source checks, not iOS runtime or real API tests.

@@ -1,0 +1,295 @@
+offset,size,uniforms,top_constants
+0x07CAF710,3408,(none),0.5(x9) 0.125(x3) 1(x3)
+0x07CB0460,2388,(none),0.5(x6) 1(x5) -2(x3)
+0x07CB0DE0,2368,(none),0.5(x6) 1(x5) -2(x3)
+0x07CB1720,1596,(none),-0.5(x2) 1(x2)
+0x07CB1D60,1216,(none),
+0x07CB2220,1208,(none),
+0x07CB26E0,3268,(none),1(x20) 0.4(x3) 2.5(x1) 1.5(x1) 0.5(x1) 1e-05(x1)
+0x07CB33B0,1432,(none),
+0x07CB3970,1592,(none),0.625(x3) 1(x3) 0.5(x1) -0.5(x1)
+0x07CB3FB0,2512,(none),
+0x07CB4980,1576,(none),0.5(x2) 1(x2) -0.5(x1)
+0x07CB4FB0,940,(none),
+0x07CB5360,10516,(none),1(x37) 0.5(x29) 0.000244141(x5) -0.000244141(x3) 0.01(x3) 2(x3) 4(x3) 8(x3) 0.555556(x3) 0.25(x2) 903.296(x2) 0.501961(x2) -0.5(x1) 116(x1) -16(x1) 0.00885645(x1)
+0x07CB7C80,1020,(none),1(x4) 0.5(x1)
+0x07CB8080,948,(none),1(x4)
+0x07CB8440,1292,(none),-1(x2) 1(x1)
+0x07CB8950,1904,(none),0.5(x4) 0.000244141(x3) 0.25(x2) -0.5(x1) 0.0625(x1) 16(x1)
+0x07CB90C0,1692,(none),1(x4) 0.125(x1) 0.5(x1)
+0x07CB9770,1192,(none),1(x4) 0.125(x1) 0.0625(x1) 0.5(x1)
+0x07CB9C20,956,(none),
+0x07CB9FE0,1516,(none),-1(x2) 1(x2) 0.5(x1)
+0x07CBA5F0,3444,(none),0.5(x4) -0.5(x2) 1(x1)
+0x07CBB390,8944,(none),1(x49) 0.5(x9)
+0x07CBD680,2396,(none),1(x11) -0.5(x2) 1e-06(x2) 0.5(x1)
+0x07CBDFE0,2128,(none),-0.5(x3) 1(x3) -2(x1) 0.5(x1)
+0x07CBE850,5908,(none),1(x20) 2(x5) 0.5(x3) 1.5(x3) 2.5(x3) 3(x2) 3.5(x1) -2(x1) 0.25(x1)
+0x07CBFF90,1528,(none),0.5(x1)
+0x07CC0590,1384,(none),
+0x07CC0B00,1388,(none),0.25(x2) 0.5(x1)
+0x07CC1070,720,(none),
+0x07CC1340,1544,(none),1(x3) -1(x3) 0.3(x1) 0.59(x1) 0.11(x1) 0.4(x1)
+0x07CC1950,1600,(none),1(x3) -1(x3) 0.3(x1) 0.59(x1) 0.11(x1) 0.4(x1)
+0x07CC1F90,2708,(none),3.8334e-06(x3) 0.5(x1) 1(x1)
+0x07CC2A30,2796,(none),3.8334e-06(x3) 0.5(x2) 1(x1)
+0x07CC3520,1900,(none),1(x2) 0.5(x1)
+0x07CC3C90,1364,(none),1(x1) 3(x1)
+0x07CC41F0,188308,UniformsTest1dFunctions,32(x550) 1(x347) 2(x246) 0.03125(x150) 287.35(x150) 139.585(x150) 0.5(x143) 0.00716409(x110) 0.0763027(x100) 0.149645(x100) 2.2(x80) 0.0031308(x70) 12.92(x70) 1.055(x70) -0.055(x70) 0.0404499(x70) 0.0773994(x70) 0.055(x70) 0.947867(x70) 2.4(x70) 1.57448(x64) 0.416667(x60) 0.501961(x60) -1(x56)
+0x07CF2190,1228,UniformsTestDispatchIndirectFillBuffers,
+0x07CF2660,1596,UniformsTestDispatchIndirectRecordInfo,
+0x07CF2CA0,2040,(none),0.5(x8) 0.25(x5) 1(x1) 0.75(x1) 0.625(x1) 0.875(x1)
+0x07CF34A0,688,(none),1(x2) 0.5(x1)
+0x07CF3750,1120,(none),0.01(x1) 1(x1)
+0x07CF3BB0,424,(none),
+0x07CF3D60,1172,(none),1(x1)
+0x07CF4200,1348,(none),1(x1)
+0x07CF4750,1204,(none),
+0x07CF4C10,4128,(none),1(x12) 0.5(x5) 1e-06(x2) -2(x1)
+0x07CF5C30,2416,(none),0.5(x3)
+0x07CF65A0,3300,UniformsBlurAcrossOrDown,
+0x07CF7290,4576,UniformsBlurAcrossOrDown,
+0x07CF8470,6468,UniformsBlurAcrossOrDown,
+0x07CF9DC0,8976,UniformsBlurAcrossOrDown,
+0x07CFC0D0,12100,UniformsBlurAcrossOrDown,
+0x07CFF020,15840,UniformsBlurAcrossOrDown,
+0x07D02E00,5376,UniformsBlurAcrossOrDown,
+0x07D04300,8860,UniformsBlurAcrossOrDown,
+0x07D065A0,14064,UniformsBlurAcrossOrDown,
+0x07D09C90,20988,UniformsBlurAcrossOrDown,
+0x07D0EE90,29632,UniformsBlurAcrossOrDown,
+0x07D16250,39996,UniformsBlurAcrossOrDown,
+0x07D1FE90,2752,UniformsBlurAcrossOrDown,
+0x07D20950,2892,UniformsBlurAcrossOrDown,
+0x07D214A0,3072,UniformsBlurAcrossOrDown,
+0x07D220A0,3212,UniformsBlurAcrossOrDown,
+0x07D22D30,3392,UniformsBlurAcrossOrDown,
+0x07D23A70,3532,UniformsBlurAcrossOrDown,
+0x07D24840,3244,UniformsBlurAcrossOrDown,1(x4)
+0x07D254F0,5228,"UniformsBoxBlur2PlanePlusAffinePlusPreprocess,UniformsDehazeTrMConstantAirlightData",1(x4) -0.000390625(x1) 0.00390625(x1)
+0x07D26960,7148,"UniformsBoxBlur2PlanePlusAffinePlusPreprocess,UniformsDehazeTrMConstantAirlightData",1(x4) -0.000390625(x1) 0.00390625(x1)
+0x07D28550,10068,"UniformsBoxBlur2PlanePlusAffinePlusPreprocess,UniformsDehazeTrMConstantAirlightData",1(x4) -0.000390625(x1) 0.00390625(x1)
+0x07D2ACB0,13908,"UniformsBoxBlur2PlanePlusAffinePlusPreprocess,UniformsDehazeTrMConstantAirlightData",1(x4) -0.000390625(x1) 0.00390625(x1)
+0x07D2E310,18748,"UniformsBoxBlur2PlanePlusAffinePlusPreprocess,UniformsDehazeTrMConstantAirlightData",1(x4) -0.000390625(x1) 0.00390625(x1)
+0x07D32C50,3980,UniformsBlurAcrossOrDown,
+0x07D33BE0,4416,UniformsBlurAcrossOrDown,
+0x07D34D20,4852,UniformsBlurAcrossOrDown,
+0x07D36020,5288,UniformsBlurAcrossOrDown,
+0x07D374D0,5724,UniformsBlurAcrossOrDown,
+0x07D38B30,6160,UniformsBlurAcrossOrDown,
+0x07D3A340,4512,UniformsBlurAcrossOrDown,1(x4)
+0x07D3B4E0,2576,UniformsCopyTextureToTexture,1(x4)
+0x07D3BEF0,3568,UniformsCopyPipeBufferToTexture,1.5259e-05(x4)
+0x07D3CCE0,4076,UniformsCopyPipeBufferToTexture,1.5259e-05(x8)
+0x07D3DCD0,3456,UniformsCopyPipeBufferToTexture,1.5259e-05(x4)
+0x07D3EA50,3964,UniformsCopyPipeBufferToTexture,1.5259e-05(x8)
+0x07D3F9D0,2840,UniformsCopyPipeBufferToTexture,
+0x07D404F0,2764,UniformsCopyTextureToTexture,
+0x07D41000,2372,UniformsCopyTexelBufferToTexelBuffer,
+0x07D41950,3164,UniformsCopyTextureToTexture,
+0x07D425B0,3004,UniformsCopyTextureToTextureWithDither,
+0x07D43170,4188,UniformsCopyTextureToTextureWithEdgeOption,
+0x07D441D0,1484,UniformsCopyTextureToTextureWithPadding,
+0x07D447A0,2608,UniformsDenoiseAlphaBlend,
+0x07D451D0,3432,UniformsDenoiseAlphaBlendLocal,1(x2) -1(x1) -0.5(x1) 0.5(x1) 2(x1)
+0x07D45F40,3452,UniformsDenoiseBlendEdges,1(x1) 0.875(x1) 0.5(x1) 0.25(x1) 0.125(x1)
+0x07D46CC0,2916,UniformsDenoiseCopyLumAndColor,
+0x07D47830,5148,UniformsDenoiseCrossBilateralAcrossOrDown,1(x8)
+0x07D48C50,6972,UniformsDenoiseCrossBilateralAcrossOrDown,1(x14)
+0x07D4A790,8836,UniformsDenoiseCrossBilateralAcrossOrDown,1(x20)
+0x07D4CA20,10660,UniformsDenoiseCrossBilateralAcrossOrDown,1(x26)
+0x07D4F3D0,12524,UniformsDenoiseCrossBilateralAcrossOrDown,1(x32)
+0x07D524C0,14348,UniformsDenoiseCrossBilateralAcrossOrDown,1(x38)
+0x07D55CD0,5656,UniformsDenoiseCrossBilateralAcrossOrDown,1(x12)
+0x07D572F0,4520,UniformsDenoiseCrossBoxBlurWithDetailAcrossOrDown,1(x7)
+0x07D584A0,5724,UniformsDenoiseCrossBoxBlurWithDetailAcrossOrDown,1(x9)
+0x07D59B00,6996,UniformsDenoiseCrossBoxBlurWithDetailAcrossOrDown,1(x11)
+0x07D5B660,8200,UniformsDenoiseCrossBoxBlurWithDetailAcrossOrDown,1(x13)
+0x07D5D670,9444,UniformsDenoiseCrossBoxBlurWithDetailAcrossOrDown,1(x15)
+0x07D5FB60,10648,UniformsDenoiseCrossBoxBlurWithDetailAcrossOrDown,1(x17)
+0x07D62500,4988,UniformsDenoiseCrossBoxBlurWithDetailAcrossOrDown,1(x11)
+0x07D63880,3480,UniformsDenoiseDeltaFindFeature,
+0x07D64620,3376,UniformsDenoiseDiffuseEdgeMarkers,
+0x07D65350,6064,UniformsDenoiseFindAndRemoveNoiseBlock,
+0x07D66B00,3692,UniformsDenoiseMakeDelta,0.5(x6)
+0x07D67970,2024,UniformsDenoiseOptionKeyFeedback,0.5(x8)
+0x07D68160,7748,UniformsDenoisePrelimEdgeDirection,32768(x1)
+0x07D69FB0,6296,UniformsDenoisePyramidBuildHp,0.5(x16) 0.0499878(x4) 0.0800171(x2) 0.639893(x2) 0.25(x2)
+0x07D6B850,4668,UniformsDenoisePyramidBuildLp1,0.25(x4) 0.4(x4) 0.05(x4)
+0x07D6CA90,8308,UniformsDenoisePyramidBuildLp3,0.25(x12) 0.4(x12) 0.05(x12)
+0x07D6EB10,3808,UniformsDenoisePyramidCollapse,0.0499878(x2) 0.0800171(x1) 0.639893(x1) 0.25(x1)
+0x07D6F9F0,7752,UniformsDenoisePyramidCollapseWithHp,2(x8) -1(x8) 0.0499878(x4) 0.0800171(x2) 0.639893(x2) 0.25(x2)
+0x07D71840,6232,UniformsDenoisePyramidCollapseWithoutHp,0.0499878(x4) 0.0800171(x2) 0.639893(x2) 0.25(x2)
+0x07D730A0,7844,UniformsDenoiseRank3x3PlusHpThreshold,-0.5(x4) 1(x2) 0.5(x2)
+0x07D74F50,7864,UniformsDenoiseRecordMaxBorder,
+0x07D76E10,3452,UniformsDenoiseRefineDeltas,
+0x07D77B90,5908,UniformsDenoiseRefineRefEdgeDirections,
+0x07D792B0,6440,UniformsDenoiseSmoothEdges,1(x9) 5.62519e-07(x1)
+0x07D7ABE0,4444,UniformsDenoiseSmoothNonEdge,1(x1) 0.75(x1) 0.5(x1) 0.25(x1)
+0x07D7BD40,1728,UniformsFillBuffer1Plane,
+0x07D7C400,1516,UniformsFillTexture,
+0x07D7C9F0,1928,UniformsFillTexture,
+0x07D7D180,2680,UniformsReorientTexture,
+0x07D7DC00,5264,UniformsSharpen3BlurDownSharpen,1(x2) -1(x1)
+0x07D7F090,5404,UniformsSharpen3BlurDownSharpen,1(x2) -1(x1)
+0x07D805B0,5584,UniformsSharpen3BlurDownSharpen,1(x2) -1(x1)
+0x07D81B80,5724,UniformsSharpen3BlurDownSharpen,1(x2) -1(x1)
+0x07D831E0,5904,UniformsSharpen3BlurDownSharpen,1(x2) -1(x1)
+0x07D848F0,6044,UniformsSharpen3BlurDownSharpen,1(x2) -1(x1)
+0x07D86090,5696,UniformsSharpen3BlurDownSharpen,1(x6) -1(x1)
+0x07D876D0,5676,UniformsSharpen3BlurSharpen1Pass,1(x2) -1(x1)
+0x07D88D00,6952,UniformsSharpen3BlurSharpen1Pass,1(x2) -1(x1)
+0x07D8A830,8844,UniformsSharpen3BlurSharpen1Pass,1(x2) -1(x1)
+0x07D8CAC0,11352,UniformsSharpen3BlurSharpen1Pass,1(x2) -1(x1)
+0x07D8F720,14476,UniformsSharpen3BlurSharpen1Pass,1(x2) -1(x1)
+0x07D92FB0,18216,UniformsSharpen3BlurSharpen1Pass,1(x2) -1(x1)
+0x07D97700,13300,"UniformsSharpen3Composite,UniformssRGBLogAccelSubStruct",1(x15) 0.5(x7) 32(x6) -1(x4) 1.8(x3) 6.53606(x3) 0.03125(x3) -7936.13(x3) 16(x3) 0.7(x2) 0.288086(x2) 0.711914(x2) -0.5(x1) 2(x1)
+0x07D9AB40,4224,UniformsSharpen3MinMaxOrEdgeDiffAcrossOrDown,2(x4) 1(x2) 0.00390625(x2) -0.0625(x2)
+0x07D9BBD0,4092,UniformsSharpen3LensBlur,1(x6) 0.33977(x1) -0.5(x1)
+0x07D9CC10,5060,"UniformsSharpen3RGBtoRGBYPlusEncode,UniformssRGBLogAccelSubStruct",1(x7) 0.555556(x4) 32(x4) 2(x4) 0.000821188(x4) 16(x3) 0.288086(x2) 0.711914(x2)
+0x07D9E070,3404,UniformsSharpen3MinMaxOrEdgeDiffAcrossOrDown,
+0x07D9EDF0,640,(none),
+0x07D9F070,6380,UniformsSort,
+0x07DA0960,7472,UniformsSort,
+0x07DA2690,5000,UniformsSort,
+0x07DA3A20,9300,UniformsSort,
+0x07DA5E80,3324,UniformsSort,
+0x07DA6B80,6160,UniformsTextureAffinePlusComposite,-1(x5) 2(x5) 1(x4) 0.388861(x3) -0.582884(x3) 0.724054(x3) -0.0943042(x3) 0.0465131(x3) 4.70046(x3) -3.70046(x3) 0.25(x2) 1.33333(x2) 1.6(x1) 1.25(x1)
+0x07DA8390,3260,UniformsTextureEncodeLogYCC,1(x6) 0.5(x4) 5989.9(x3) 1033.53(x3) 21.4882(x3) 2.28943e-06(x3) 5938.12(x3) 1917.61(x3) 97.2295(x3) 0.212745(x3) 0.787255(x3) 0.25(x1) 0.75(x1)
+0x07DA9050,5788,UniformsBoxBlur3PlanePlusComputeAB,
+0x07DAA6F0,9020,UniformsBoxBlur3PlanePlusComputeAB,
+0x07DACA30,13868,UniformsBoxBlur3PlanePlusComputeAB,
+0x07DB0060,20332,UniformsBoxBlur3PlanePlusComputeAB,
+0x07DB4FD0,28412,UniformsBoxBlur3PlanePlusComputeAB,
+0x07DBBED0,38108,UniformsBoxBlur3PlanePlusComputeAB,
+0x07DC53B0,4460,UniformsBoxBlur3PlanePlusComputeAB,
+0x07DC6520,4864,UniformsBoxBlur3PlanePlusComputeAB,
+0x07DC7820,5308,UniformsBoxBlur3PlanePlusComputeAB,
+0x07DC8CE0,5712,UniformsBoxBlur3PlanePlusComputeAB,
+0x07DCA330,6156,UniformsBoxBlur3PlanePlusComputeAB,
+0x07DCBB40,6560,UniformsBoxBlur3PlanePlusComputeAB,
+0x07DCD4E0,4752,UniformsBoxBlur3PlanePlusComputeAB,
+0x07DCE770,5432,UniformsBoxBlur3PlanePlusComputeAB,
+0x07DCFCB0,5856,UniformsBoxBlurDown3PlanePlusComputeAB,
+0x07DD1390,6520,UniformsBoxBlurDown3PlanePlusComputeAB,
+0x07DD2D10,7184,UniformsBoxBlurDown3PlanePlusComputeAB,
+0x07DD4920,7848,UniformsBoxBlurDown3PlanePlusComputeAB,
+0x07DD67D0,8512,UniformsBoxBlurDown3PlanePlusComputeAB,
+0x07DD8910,9176,UniformsBoxBlurDown3PlanePlusComputeAB,
+0x07DDACF0,6144,UniformsBoxBlurDown3PlanePlusComputeAB,
+0x07DDC4F0,6564,UniformsBoxBlurDown3PlanePlusComputeAB,
+0x07DDDEA0,5708,UniformsBoxBlur1PlanePlusComputeAB,
+0x07DDF4F0,9140,UniformsBoxBlur1PlanePlusComputeAB,
+0x07DE18B0,14308,UniformsBoxBlur1PlanePlusComputeAB,
+0x07DE50A0,21132,UniformsBoxBlur1PlanePlusComputeAB,
+0x07DEA330,29692,UniformsBoxBlur1PlanePlusComputeAB,
+0x07DF1730,39908,UniformsBoxBlur1PlanePlusComputeAB,
+0x07DFB320,4436,UniformsBoxBlur1PlanePlusComputeAB,
+0x07DFC480,4860,UniformsBoxBlur1PlanePlusComputeAB,
+0x07DFD780,5284,UniformsBoxBlur1PlanePlusComputeAB,
+0x07DFEC30,5708,UniformsBoxBlur1PlanePlusComputeAB,
+0x07E00280,6132,UniformsBoxBlur1PlanePlusComputeAB,
+0x07E01A80,6556,UniformsBoxBlur1PlanePlusComputeAB,
+0x07E03420,4688,UniformsBoxBlur1PlanePlusComputeAB,
+0x07E04670,4692,UniformsBoxBlur1PlanePlusComputeAB,
+0x07E058D0,4568,UniformsBoxBlurDown1PlanePlusComputeAB,
+0x07E06AB0,4992,UniformsBoxBlurDown1PlanePlusComputeAB,
+0x07E07E30,5416,UniformsBoxBlurDown1PlanePlusComputeAB,
+0x07E09360,5840,UniformsBoxBlurDown1PlanePlusComputeAB,
+0x07E0AA30,6264,UniformsBoxBlurDown1PlanePlusComputeAB,
+0x07E0C2B0,6688,UniformsBoxBlurDown1PlanePlusComputeAB,
+0x07E0DCD0,4820,UniformsBoxBlurDown1PlanePlusComputeAB,
+0x07E0EFB0,5084,UniformsBoxBlurDown1PlanePlusComputeAB,
+0x07E10390,2068,UniformsLine,
+0x07E10BB0,2060,UniformsSolidFrame,
+0x07E113C0,5252,UniformsOverlayGrain,1(x4) 0.001(x2) -1(x1) 4(x1) -0.5(x1)
+0x07E12850,9544,UniformsGlow,2(x8) 0.25(x8) 3(x2) 0.5(x2) -0.5(x2) 1(x1)
+0x07E14DA0,3532,UniformsSkew,128(x1)
+0x07E15B70,3532,UniformsSkew,128(x1)
+0x07E16940,5208,UniformsBoxBlurAcrossOrDown,
+0x07E17DA0,8600,UniformsBoxBlurAcrossOrDown,
+0x07E19F40,13688,UniformsBoxBlurAcrossOrDown,
+0x07E1D4C0,20472,UniformsBoxBlurAcrossOrDown,
+0x07E224C0,28952,UniformsBoxBlurAcrossOrDown,
+0x07E295E0,39128,UniformsBoxBlurAcrossOrDown,
+0x07E32EC0,3900,UniformsBoxBlurAcrossOrDown,
+0x07E33E00,4324,UniformsBoxBlurAcrossOrDown,
+0x07E34EF0,4748,UniformsBoxBlurAcrossOrDown,
+0x07E36180,5172,UniformsBoxBlurAcrossOrDown,
+0x07E375C0,5596,UniformsBoxBlurAcrossOrDown,
+0x07E38BA0,6020,UniformsBoxBlurAcrossOrDown,
+0x07E3A330,4152,UniformsBoxBlurAcrossOrDown,
+0x07E3B370,8004,UniformsBoxBlurAcrossOrDown,
+0x07E3D2C0,4136,UniformsDefringeBlendBlurNonBlurred,-0.5(x4) 0.5(x2)
+0x07E3E2F0,3788,UniformsDefringeCompositeMask,1(x2)
+0x07E3F1C0,4016,UniformsDefringeComputeMask,1(x5) -0.5(x4) 0.00012207(x1) 2000(x1)
+0x07E40170,4368,UniformsDefringeHDRDecodeNonLinear,-0.5(x2) 0.59392(x1) 1.4848(x1) 1(x1)
+0x07E41280,3452,UniformsDefringeHDREncodeNonLinear,0.5(x5) 1(x3) 1.68373(x1) 0.673491(x1)
+0x07E42000,1904,UniformsDefringeComputeMaxWithThresholdMask,
+0x07E42770,2144,UniformsDefringeComputeMaxMaskDownAcross,
+0x07E42FD0,2176,UniformsDefringeComputeMaxMaskDownAcross,
+0x07E43850,2384,UniformsDefringeMinMask,
+0x07E441A0,3112,UniformsDefringeMultiplyMask,
+0x07E44DD0,8024,UniformsDefringe,1(x10) -0.5(x6) 0.5(x2)
+0x07E46D30,2708,UniformsLocalContrastY,0.25(x2) 0.5(x1)
+0x07E477D0,4244,"UniformsDehazeTrMConstantAirlightData,UniformsMinFilterPlusDarkChannelPreprocess",1(x2)
+0x07E48870,5468,"UniformsDehazeTrMConstantAirlightData,UniformsMinFilterPlusDarkChannelPreprocess",1(x2)
+0x07E49DD0,7244,"UniformsDehazeTrMConstantAirlightData,UniformsMinFilterPlusDarkChannelPreprocess",1(x2)
+0x07E4BA20,9612,"UniformsDehazeTrMConstantAirlightData,UniformsMinFilterPlusDarkChannelPreprocess",1(x2)
+0x07E4DFB0,12572,"UniformsDehazeTrMConstantAirlightData,UniformsMinFilterPlusDarkChannelPreprocess",1(x2)
+0x07E510D0,16124,"UniformsDehazeTrMConstantAirlightData,UniformsMinFilterPlusDarkChannelPreprocess",1(x2)
+0x07E54FD0,3984,"UniformsDehazeTrMConstantAirlightData,UniformsMinFilterPlusDarkChannelPreprocess",
+0x07E55F60,3204,UniformsMinFilterPlusDarkChannelPreprocess,1(x2)
+0x07E56BF0,2760,"UniformsDehazeTrMConstantAirlightData,UniformsDehazeTrMDarkChannel",
+0x07E576C0,1712,UniformsDehazeTrMEmitIndexedRGBL,
+0x07E57D70,2232,UniformsDehazeTrMSetConstantAirlight,1(x12) 1.19209e-07(x2) 0.00390625(x1)
+0x07E58630,3448,UniformsBoxBlur2PlanePlusAffinePlusPreprocess,
+0x07E593B0,3688,UniformsBoxBlur2PlanePlusAffinePlusPreprocess,
+0x07E5A220,3928,UniformsBoxBlur2PlanePlusAffinePlusPreprocess,
+0x07E5B180,4168,UniformsBoxBlur2PlanePlusAffinePlusPreprocess,
+0x07E5C1D0,4408,UniformsBoxBlur2PlanePlusAffinePlusPreprocess,
+0x07E5D310,4648,UniformsBoxBlur2PlanePlusAffinePlusPreprocess,
+0x07E5E540,3716,UniformsBoxBlur2PlanePlusAffinePlusPreprocess,
+0x07E5F3D0,3888,UniformsBoxBlur2PlanePlusAffinePlusPreprocess,
+0x07E60300,4472,"UniformsBoxBlur2PlanePlusAffinePlusPreprocess,UniformsDehazeTrMConstantAirlightData",1(x4) -0.000390625(x1) 0.00390625(x1)
+0x07E61480,4712,"UniformsBoxBlur2PlanePlusAffinePlusPreprocess,UniformsDehazeTrMConstantAirlightData",1(x4) -0.000390625(x1) 0.00390625(x1)
+0x07E626F0,4952,"UniformsBoxBlur2PlanePlusAffinePlusPreprocess,UniformsDehazeTrMConstantAirlightData",1(x4) -0.000390625(x1) 0.00390625(x1)
+0x07E63A50,5192,"UniformsBoxBlur2PlanePlusAffinePlusPreprocess,UniformsDehazeTrMConstantAirlightData",1(x4) -0.000390625(x1) 0.00390625(x1)
+0x07E64EA0,5432,"UniformsBoxBlur2PlanePlusAffinePlusPreprocess,UniformsDehazeTrMConstantAirlightData",1(x4) -0.000390625(x1) 0.00390625(x1)
+0x07E663E0,5672,"UniformsBoxBlur2PlanePlusAffinePlusPreprocess,UniformsDehazeTrMConstantAirlightData",1(x4) -0.000390625(x1) 0.00390625(x1)
+0x07E67A10,4740,"UniformsBoxBlur2PlanePlusAffinePlusPreprocess,UniformsDehazeTrMConstantAirlightData",1(x4) -0.000390625(x1) 0.00390625(x1)
+0x07E68CA0,4716,"UniformsBoxBlur2PlanePlusAffinePlusPreprocess,UniformsDehazeTrMConstantAirlightData",1(x4) -0.000390625(x1) 0.00390625(x1)
+0x07E69F10,2480,UniformsHistogramWriter2,65535(x2)
+0x07E6A8C0,3592,UniformsHistogramWriter2,65535(x6)
+0x07E6B6D0,2004,UniformsSample,1(x1) 255(x1) 0.5(x1)
+0x07E6BEB0,2656,UniformsSample,1(x3) 255(x3) 0.5(x3)
+0x07E6C910,7680,UniformsMoireBoxBlurAndBlend,1(x4) 0.5(x1) 4(x1)
+0x07E6E710,10336,UniformsMoireBoxBlurAndBlend,1(x4) 0.5(x1) 4(x1)
+0x07E70F70,14320,UniformsMoireBoxBlurAndBlend,1(x4) 0.5(x1) 4(x1)
+0x07E74760,19632,UniformsMoireBoxBlurAndBlend,1(x4) 0.5(x1) 4(x1)
+0x07E79410,26272,UniformsMoireBoxBlurAndBlend,1(x4) 0.5(x1) 4(x1)
+0x07E7FAB0,34240,UniformsMoireBoxBlurAndBlend,1(x4) 0.5(x1) 4(x1)
+0x07E88070,5892,UniformsMoireBoxBlurAndBlend,
+0x07E89780,6992,UniformsMoireBoxBlurAndBlend,1(x4) 0.5(x1) 4(x1)
+0x07E8B2D0,3240,UniformsMoireCombine3Plane1Plane,4(x1) 1(x1)
+0x07E8BF80,2160,UniformsManualDistortionTransform,
+0x07E8C7F0,2216,UniformsPerspectiveTransform,1(x4) 0.1(x1) 10(x1)
+0x07E8D0A0,2704,UniformsRadialTableWarpTransform,1(x1)
+0x07E8DB30,4548,UniformsAutoLateralCAWarpTransform,
+0x07E8ED00,5256,UniformsWarp,0.00390625(x4) -0.0625(x4) 0.939451(x4) 0.0625(x4) -0.00390625(x4) 32(x2)
+0x07E90190,18720,UniformsWarp,0.00390625(x64) -0.0625(x64) 0.939451(x4) 0.0625(x4) -0.00390625(x4) 32(x2)
+0x07E94AB0,9988,UniformsWarp,32(x8) 0.00390625(x4) -0.0625(x4) 0.939451(x4) 0.0625(x4) -0.00390625(x4)
+0x07E971C0,39368,UniformsWarp,0.00390625(x64) -0.0625(x64) 32(x8) 0.939451(x4) 0.0625(x4) -0.00390625(x4)
+0x07EA0B90,1640,UniformsCopyBufferToBuffer,
+0x07EA1200,1944,UniformsCopyTextureToBuffer,1(x4)
+0x07EA19A0,2592,UniformsOutputSharpenEncodeHDR,0.5(x3) 1(x3)
+0x07EA23C0,2480,UniformsOutputSharpenEncodeSDR,0.555556(x3) 1(x3) 32(x3) 2(x3) 0.000821188(x3)
+0x07EA2D70,6444,UniformsOutputSharpenHPAndBlendAndDecode,1(x9) 0.5(x6) 4(x6) 32(x6) 1.8(x3) 6.53606(x3) 0.03125(x3) -7936.13(x3)
+0x07EA46A0,3988,UniformsOutputSharpenUSMWithThreshold,2(x2) 0.25(x2)
+0x07EA5640,72276,"UniformsColorTableUsingBuffers,UniformsLumaCurve,UniformsSequentialMask",1(x137) -1(x31) 32(x18) 2(x15) 0.00390625(x12) 0.015625(x12) 128(x12) 16(x9) 6(x9) 287.35(x9) 4(x6) 4096(x6) 0.0763027(x6) 0.03125(x6) 12.92(x5) 0.0031308(x5) 0.0773994(x4) 0.0404499(x4) -6(x3) 3(x3) 5(x3) 0.416667(x3) 1.055(x3) -0.055(x3)
+0x07EB70A0,153820,"UniformsABCtoRGB_local,UniformsDehaze,UniformsDehazeTrMConstantAirlightData,UniformsExposure",1(x532) 1.36288(x240) 2(x231) 0.5(x172) 1.87786(x120) -1(x61) 0.073374(x60) 16(x29) -0.5(x27) 4(x26) 0.25(x17) 6(x16) 0.00390625(x12) 0.72338(x12) -16(x9) -0.0625(x9) -2(x7) -0.25(x7) 2.2(x6) -1000(x6) 1000(x6) -0.75(x6) 0.939451(x6) 0.0625(x6)
+0x07EDC980,116148,"Uniforms1dTable,UniformsApplyHDRGamma,UniformsColorTableUsingTextures,UniformsGrayMixer",1(x378) -1(x113) 32(x78) 0.00390625(x49) 2(x40) 0.015625(x36) 128(x36) 287.35(x36) 0.5(x34) 0.03125(x30) 0.0763027(x24) 3(x20) 6(x19) 4096(x18) 12.92(x16) 0.0031308(x16) 5(x14) 0.0773994(x14) 0.0404499(x14) 4(x13) -0.0625(x13) 0.939451(x12) 0.0625(x12) -0.00390625(x12)
+0x07EF8F40,116900,"UniformsABCtoRGB_local,UniformsApplyFlatNoise,UniformsColorTableUsingTextures,UniformsExposure",1(x331) 1.36288(x240) 2(x207) 0.5(x132) 1.87786(x120) 0.073374(x60) -1(x40) 16(x30) 0.25(x18) 6(x12) 4(x12) 0.00390625(x12) -0.5(x9) -16(x6) 2.2(x6) -1000(x6) 1000(x6) 3(x6) 0.015625(x6) 128(x6) -2(x6) 0.3(x6) 0.59(x6) 0.11(x6)
+0x07F157F0,144156,"UniformsColorTableUsingTextures,UniformsExposure,UniformsHSLTuner,UniformsLocalContrast",1(x482) 2(x241) 1.36288(x240) 0.5(x154) 1.87786(x120) -1(x72) 0.073374(x60) 16(x33) 6(x31) 4(x28) 0.25(x21) 0.00390625(x18) -0.5(x15) 0.015625(x12) 128(x12) 3(x10) -6(x8) 0.3(x7) 0.59(x7) 0.11(x7) -2(x7) 5(x6) 2.2(x6) -1000(x6)
+0x07F38B10,57016,"Uniforms1dTable,UniformsABCtoRGB_local,UniformsApplyFlatNoise,UniformsCopyPlanes",1(x136) -1(x40) 0.5(x22) 16(x12) 2(x10) -16(x4) 0.3(x3) 0.59(x3) 0.11(x3) -2(x2) 0.25(x2) 3.36746(x2) 3(x1)
+0x07F469D0,7396,"UniformsLimitFloatRange,UniformsLogEncodeForHistogram,UniformsQuantizeBitDepth,UniformsSequence6",0.999023(x4) 0.999756(x4)

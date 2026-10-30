@@ -1,0 +1,23 @@
+{
+  "revision": "camera-interface-controls-and-guidance",
+  "build": 27,
+  "network_mode": "App_direct_to_DeepSeek_and_Seedream",
+  "server_required": false,
+  "custom_domain_required": false,
+  "apple_cloud_login_required": false,
+  "hosting_monthly_fee": "none_required_by_this_architecture",
+  "model_api_fees": "charged_by_providers",
+  "key_storage": "device_only_when_unlocked_keychain_hidden_input",
+  "live_beauty": "enabled_by_default_CainCamera_CoreImage_port_preserved",
+  "auto_framing": "always_visible_reticle_subject_box_target_point_and_continuous_zoom",
+  "auto_capture": "no_countdown_shoots_only_when_composition_zoom_exposure_sharpness_motion_ready",
+  "gallery": "original_and_versions_preserved_download_only_recovery_job_deduplication",
+  "backend_code": "archived_in_docs_legacy_backend_not_active",
+  "static_project_check": "passed",
+  "direct_source_audit": "passed_16_checks",
+  "swift_syntax": "passed_26_app_3_test_files",
+  "swift_contract_tests": "source_updated_not_executed_no_swiftc",
+  "xcode_build": "not_run_no_sdk",
+  "live_api_test": "not_run_no_keys",
+  "iphone_test": "not_run"
+}

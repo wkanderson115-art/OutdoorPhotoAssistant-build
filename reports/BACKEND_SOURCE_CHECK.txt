@@ -1,0 +1,4 @@
+PASS: App has no provider endpoints or provider Key entry fields
+PASS: only authenticated backend is used
+PASS: Swift and server natural policies match exactly
+PASS: Apple entitlements and project generator configured

@@ -1,0 +1,9 @@
+PASS: build10 migration
+PASS: grid follows auto composition
+PASS: always visible reticle
+PASS: subject framing remains
+PASS: human threshold consistent
+PASS: best person confidence used
+PASS: zoom no strict gyro gate
+PASS: zoom temporal protection
+PASS: edge veto retained

@@ -1,0 +1,1 @@
+融合Nikon人像、光圈景深教程及Canon构图建议，新增单人/合影/环境叙事策划、逆光建议、景深选择及快门时机解释。自动执行仍限既有变焦、曝光补偿、构图质量快门；ISO与快门由系统AE协调；未实现可变光圈、自动深度虚化、运动主体跟踪及自动机位。真实背景距离未知时不自动强虚化。来源：https://www.nikonusa.com/learn-and-explore/c/tips-and-techniques/quick-tips-for-taking-better-portraits 和 https://sg.canon/en/support/8200023500 。未编译及真机验证。
