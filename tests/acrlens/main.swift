@@ -106,6 +106,7 @@ func render(_ image: CIImage) -> Pixels {
 }
 
 print("== ACRLensRepairEngine 行为测试 ==")
+print("  [diag] CIKL warp kernel available = \(ACRLensRepairEngine.warpKernelAvailable())")
 
 // 1. LCP 解析 + 焦段插值
 do {

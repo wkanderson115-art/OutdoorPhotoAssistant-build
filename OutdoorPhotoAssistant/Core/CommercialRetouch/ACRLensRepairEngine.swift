@@ -288,6 +288,9 @@ enum ACRLensRepairEngine {
         return k.apply(extent: extent, roiCallback: roi, arguments: args)
     }
 
+    /// 诊断：CIKL 的 warp kernel 在这个 SDK 上到底能不能编译（测试里会打印）
+    static func warpKernelAvailable() -> Bool { return K.distort != nil }
+
     // MARK: 镜头校正
 
     /// 顺序与 ACR 一致：畸变 → 横向色差 → 暗角（都在线性域）
@@ -301,28 +304,28 @@ enum ACRLensRepairEngine {
 
         if correction.distortion > 0.5, let entry = correction.entry {
             let k = distortionCoefficients(entry: entry, amount: correction.distortion)
-            if k.0 != 0 || k.1 != 0 || k.2 != 0 {
+            let scale = (k.0 + k.1 + k.2) * -6.0
+            if abs(scale) > 1.0e-4 {
                 let cx = extent.origin.x + extent.width * CGFloat(entry.centerX)
                 let cy = extent.origin.y + extent.height * CGFloat(entry.centerY)
-                let norm = normalizedScale(entry: entry, extent: extent)
-                let roi: CIKernelROICallback = { _, rect in
-                    return rect.insetBy(dx: -rect.width * 0.05, dy: -rect.height * 0.05)
+                let radius = max(extent.width, extent.height) * 0.72
+                let f = CIFilter(name: "CIBumpDistortion", parameters: [
+                    kCIInputImageKey: work,
+                    kCIInputCenterKey: CIVector(x: cx, y: cy),
+                    kCIInputRadiusKey: radius,
+                    kCIInputScaleKey: min(1.0, max(-1.0, scale))
+                ])
+                if let out = f?.outputImage {
+                    work = out.cropped(to: extent)
                 }
-                if let warped = K.distort.apply(extent: extent, roiCallback: roi, arguments: [
-                    NSNumber(value: k.0), NSNumber(value: k.1), NSNumber(value: k.2),
-                    NSNumber(value: norm), NSNumber(value: Double(cx)), NSNumber(value: Double(cy))
-                ]) {
-                    work = warped.cropped(to: extent)
-                }
-                let scale = correction.autoScale
-                    ? autoFitScale(k1: k.0, k2: k.1, k3: k.2)
-                    : max(0.6, correction.scale / 100.0)
-                if abs(scale - 1.0) > 1e-4 {
-                    let s = CGAffineTransform(translationX: extent.midX, y: extent.midY)
-                        .scaledBy(x: CGFloat(scale), y: CGFloat(scale))
-                        .translatedBy(x: -extent.midX, y: -extent.midY)
-                    work = work.transformed(by: s).cropped(to: extent)
-                }
+            }
+            let fit = correction.autoScale ? autoFitScale(k1: k.0, k2: k.1, k3: k.2)
+                                           : max(0.6, correction.scale / 100.0)
+            if abs(fit - 1.0) > 1e-4 {
+                let t = CGAffineTransform(translationX: extent.midX, y: extent.midY)
+                    .scaledBy(x: CGFloat(fit), y: CGFloat(fit))
+                    .translatedBy(x: -extent.midX, y: -extent.midY)
+                work = work.transformed(by: t).cropped(to: extent)
             }
         }
 
@@ -410,33 +413,21 @@ enum ACRLensRepairEngine {
         var work = image
 
         if abs(geometry.perspectiveVertical) > 0.0001 || abs(geometry.perspectiveHorizontal) > 0.0001 {
-            // 真正的四角单应：解 8 元一次方程拿 dst→src 的逆矩阵，再进 warp kernel
-            let pv = CGFloat(geometry.perspectiveVertical) * extent.height
+            // 四角映射交给内置 CIPerspectiveTransform（等价单应，不依赖 CIKL warp）
             let ph = CGFloat(geometry.perspectiveHorizontal) * extent.width
-            let src: [CGPoint] = [
-                CGPoint(x: extent.minX, y: extent.minY),
-                CGPoint(x: extent.maxX, y: extent.minY),
-                CGPoint(x: extent.maxX, y: extent.maxY),
-                CGPoint(x: extent.minX, y: extent.maxY)
-            ]
-            let dst: [CGPoint] = [
-                CGPoint(x: extent.minX + ph, y: extent.minY),
-                CGPoint(x: extent.maxX - ph, y: extent.minY),
-                CGPoint(x: extent.maxX + ph, y: extent.maxY),
-                CGPoint(x: extent.minX - ph, y: extent.maxY)
-            ]
-            let _ = pv
-            if let h = homography(from: dst, to: src) {
-                let roi: CIKernelROICallback = { _, rect in rect.insetBy(dx: -16, dy: -16) }
-                if let warped = K.homography.apply(extent: extent, roiCallback: roi, arguments: [
-                    NSNumber(value: h[0]), NSNumber(value: h[1]), NSNumber(value: h[2]),
-                    NSNumber(value: h[3]), NSNumber(value: h[4]), NSNumber(value: h[5]),
-                    NSNumber(value: h[6]), NSNumber(value: h[7])
-                ]) {
-                    work = warped.cropped(to: extent)
-                }
+            let pv = CGFloat(geometry.perspectiveVertical) * extent.height
+            let f = CIFilter(name: "CIPerspectiveTransform", parameters: [
+                kCIInputImageKey: work,
+                "inputTopLeft": CIVector(x: extent.minX + ph, y: extent.minY + pv),
+                "inputTopRight": CIVector(x: extent.maxX - ph, y: extent.minY + pv),
+                "inputBottomRight": CIVector(x: extent.maxX + ph, y: extent.maxY - pv),
+                "inputBottomLeft": CIVector(x: extent.minX - ph, y: extent.maxY - pv)
+            ])
+            if let out = f?.outputImage {
+                work = out.cropped(to: extent)
             }
         }
+
         if abs(geometry.rotationDegrees) > 0.01 {
             let rad = CGFloat(geometry.rotationDegrees) * .pi / 180
             let t = CGAffineTransform(translationX: extent.midX, y: extent.midY)
